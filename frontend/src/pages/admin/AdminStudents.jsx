@@ -213,8 +213,8 @@ export default function AdminStudents() {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800">Quản lý Học viên</h2>
-        <p className="text-sm text-gray-500 mt-1">
+        <h2 className="text-2xl font-bold text-zinc-100">Quản lý Học viên</h2>
+        <p className="text-sm text-zinc-400 mt-1">
           Xem danh sách và lịch sử mua khóa học của từng học viên.
         </p>
       </div>

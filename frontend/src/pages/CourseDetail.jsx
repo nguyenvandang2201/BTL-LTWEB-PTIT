@@ -92,7 +92,7 @@ export default function CourseDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         {/* Left: image + description */}
         <div className="lg:col-span-2 space-y-5">
-          <div className="rounded-xl overflow-hidden aspect-video bg-gray-100">
+          <div className="rounded-xl overflow-hidden aspect-video bg-zinc-800">
             <img
               src={course.image_url || 'https://placehold.co/800x450?text=No+Image'}
               alt={course.title}
@@ -101,17 +101,17 @@ export default function CourseDetail() {
             />
           </div>
           <div>
-            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+            <span className="text-xs font-medium text-[#c0392b] bg-zinc-800 px-3 py-1 rounded-full">
               {course.category?.name || 'Khóa học'}
             </span>
-            <h1 className="text-3xl font-extrabold text-gray-900 mt-3 mb-3 leading-tight">
+            <h1 className="text-3xl font-extrabold text-zinc-100 mt-3 mb-3 leading-tight">
               {course.title}
             </h1>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-zinc-300 leading-relaxed">
               {course.description || 'Chưa có mô tả cho khóa học này.'}
             </p>
           </div>
-          <div className="flex items-center gap-4 text-sm text-gray-500">
+          <div className="flex items-center gap-4 text-sm text-zinc-400">
             <span className="flex items-center gap-1.5">
               <BookOpen size={16} />
               {lessons.length} bài giảng
@@ -125,19 +125,19 @@ export default function CourseDetail() {
 
         {/* Right: price + enroll */}
         <div className="lg:col-span-1">
-          <div className="sticky top-20 bg-white border border-gray-200 rounded-2xl shadow-lg p-6 space-y-5">
-            <div className="text-4xl font-extrabold text-blue-600">
+          <div className="sticky top-20 bg-zinc-900 border border-zinc-700 rounded-2xl shadow-lg p-6 space-y-5">
+            <div className="text-4xl font-extrabold text-[#c0392b]">
               {formatPrice(course.price)}
             </div>
 
             {/* Feedback messages */}
             {enrollMsg && (
-              <div className="px-3 py-2 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg">
+              <div className="px-3 py-2 bg-green-950/40 border border-green-900 text-green-400 text-sm rounded-lg">
                 {enrollMsg}
               </div>
             )}
             {enrollError && (
-              <div className="px-3 py-2 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg">
+              <div className="px-3 py-2 bg-red-950/40 border border-red-900 text-red-400 text-sm rounded-lg">
                 {enrollError}
               </div>
             )}
@@ -145,7 +145,7 @@ export default function CourseDetail() {
             <button
               onClick={handleEnroll}
               disabled={enrollMutation.isPending}
-              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold text-lg py-3.5 rounded-xl transition-colors shadow-md hover:shadow-lg"
+              className="w-full flex items-center justify-center gap-2 bg-[#8b0000] hover:bg-[#a01828] disabled:opacity-60 text-white font-semibold text-lg py-3.5 rounded-xl transition-colors shadow-md hover:shadow-lg"
             >
               {enrollMutation.isPending ? (
                 <>
@@ -159,10 +159,10 @@ export default function CourseDetail() {
                 </>
               )}
             </button>
-            <p className="text-xs text-gray-400 text-center">
+            <p className="text-xs text-zinc-400 text-center">
               Truy cập trọn đời sau khi đăng ký
             </p>
-            <ul className="text-sm text-gray-600 space-y-2">
+            <ul className="text-sm text-zinc-300 space-y-2">
               <li className="flex items-center gap-2">
                 <span className="text-green-500">✓</span> {lessons.length} bài giảng
               </li>
@@ -179,23 +179,23 @@ export default function CourseDetail() {
 
       {/* ===== MIDDLE: Lessons list ===== */}
       <div className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Nội dung khóa học</h2>
+        <h2 className="text-2xl font-bold text-zinc-100 mb-4">Nội dung khóa học</h2>
         {lessons.length === 0 ? (
-          <p className="text-gray-400 py-6 text-center">Chưa có bài giảng nào.</p>
+          <p className="text-zinc-500 py-6 text-center">Chưa có bài giảng nào.</p>
         ) : (
-          <div className="border border-gray-200 rounded-xl overflow-hidden">
+          <div className="border border-zinc-800 rounded-xl overflow-hidden">
             {lessons.map((lesson, index) => (
               <div
                 key={lesson.lesson_id}
-                className="flex justify-between items-center p-4 border-b last:border-b-0 bg-white hover:bg-gray-50 transition-colors"
+                className="flex justify-between items-center p-4 border-b border-zinc-800 last:border-b-0 bg-zinc-900 hover:bg-zinc-800 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <span className="w-7 h-7 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 text-xs font-bold shrink-0">
+                  <span className="w-7 h-7 flex items-center justify-center rounded-full bg-zinc-800 text-[#c0392b] text-xs font-bold shrink-0">
                     {index + 1}
                   </span>
-                  <span className="text-gray-700 text-sm font-medium">{lesson.title}</span>
+                  <span className="text-zinc-200 text-sm font-medium">{lesson.title}</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-gray-400 text-xs shrink-0">
+                <div className="flex items-center gap-1.5 text-zinc-500 text-xs shrink-0">
                   <Lock size={14} />
                   <span>Đã khóa</span>
                 </div>
@@ -207,30 +207,30 @@ export default function CourseDetail() {
 
       {/* ===== BOTTOM: Reviews ===== */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+        <h2 className="text-2xl font-bold text-zinc-100 mb-6">
           Đánh giá ({reviews.length})
         </h2>
         {reviews.length === 0 ? (
-          <p className="text-gray-400 py-6 text-center">Chưa có đánh giá nào.</p>
+          <p className="text-zinc-500 py-6 text-center">Chưa có đánh giá nào.</p>
         ) : (
           <div className="space-y-4">
             {reviews.map((review) => (
               <div
                 key={review.review_id}
-                className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm"
+                className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 shadow-sm"
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm uppercase">
+                    <div className="w-9 h-9 rounded-full bg-[#8b0000] text-white flex items-center justify-center font-bold text-sm uppercase">
                       {review.user?.full_name?.[0] || 'U'}
                     </div>
-                    <span className="font-semibold text-gray-800 text-sm">
+                    <span className="font-semibold text-zinc-100 text-sm">
                       {review.user?.full_name || 'Học viên ẩn danh'}
                     </span>
                   </div>
                   <StarRating rating={review.rating} />
                 </div>
-                <p className="text-gray-600 text-sm leading-relaxed pl-11">
+                <p className="text-zinc-300 text-sm leading-relaxed pl-11">
                   {review.comment}
                 </p>
               </div>

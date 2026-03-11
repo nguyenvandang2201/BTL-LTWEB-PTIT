@@ -72,68 +72,68 @@ export default function Profile() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-10 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-gray-800">Hồ sơ cá nhân</h1>
-        <p className="text-gray-500 mt-1">Quản lý thông tin tài khoản của bạn.</p>
+        <h1 className="text-3xl font-bold text-zinc-100">Hồ sơ cá nhân</h1>
+        <p className="text-zinc-400 mt-1">Quản lý thông tin tài khoản của bạn.</p>
       </div>
 
       {/* ── Profile card ── */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">
+      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-6 space-y-5">
         {/* Avatar + info */}
-        <div className="flex items-center gap-4 pb-4 border-b border-gray-100">
-          <div className="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold uppercase shrink-0">
+        <div className="flex items-center gap-4 pb-4 border-b border-zinc-800">
+          <div className="w-14 h-14 rounded-full bg-[#8b0000] text-white flex items-center justify-center text-2xl font-bold uppercase shrink-0">
             {user?.full_name?.[0] || 'U'}
           </div>
           <div>
-            <p className="font-semibold text-gray-800">{user?.full_name}</p>
-            <p className="text-sm text-gray-400">{user?.email}</p>
-            <span className="inline-block mt-1 text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2.5 py-0.5 rounded-full">
+            <p className="font-semibold text-zinc-100">{user?.full_name}</p>
+            <p className="text-sm text-zinc-400">{user?.email}</p>
+            <span className="inline-block mt-1 text-xs bg-zinc-800 text-[#c0392b] border border-zinc-700 px-2.5 py-0.5 rounded-full">
               {user?.role === 'admin' ? 'Quản trị viên' : 'Học viên'}
             </span>
           </div>
         </div>
 
         {/* Update name form */}
-        <h3 className="font-semibold text-gray-700 flex items-center gap-2 text-sm">
+        <h3 className="font-semibold text-zinc-200 flex items-center gap-2 text-sm">
           <User size={16} />
           Cập nhật họ tên
         </h3>
 
         {profileMsg && (
-          <div className="flex items-center gap-2 text-green-700 text-sm bg-green-50 border border-green-200 px-4 py-2.5 rounded-lg">
+          <div className="flex items-center gap-2 text-green-400 text-sm bg-green-950/40 border border-green-900 px-4 py-2.5 rounded-lg">
             <CheckCircle2 size={15} />
             {profileMsg}
           </div>
         )}
         {profileError && (
-          <div className="text-red-600 text-sm bg-red-50 border border-red-200 px-4 py-2.5 rounded-lg">
+          <div className="text-red-400 text-sm bg-red-950/40 border border-red-900 px-4 py-2.5 rounded-lg">
             {profileError}
           </div>
         )}
 
         <form onSubmit={handleProfileSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Họ và tên</label>
+            <label className="block text-sm font-medium text-zinc-300 mb-1.5">Họ và tên</label>
             <input
               type="text"
               value={profileForm.full_name}
               onChange={(e) => setProfileForm({ full_name: e.target.value })}
               required
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+            <label className="block text-sm font-medium text-zinc-300 mb-1.5">Email</label>
             <input
               type="email"
               value={user?.email || ''}
               disabled
-              className="w-full px-4 py-2.5 border border-gray-200 bg-gray-50 text-gray-400 rounded-lg text-sm cursor-not-allowed"
+              className="w-full px-4 py-2.5 border border-zinc-800 bg-zinc-900 text-zinc-500 rounded-lg text-sm cursor-not-allowed"
             />
           </div>
           <button
             type="submit"
             disabled={profileLoading}
-            className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-semibold rounded-lg transition-colors"
+            className="px-6 py-2.5 bg-[#8b0000] hover:bg-[#a01828] disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-colors"
           >
             {profileLoading ? 'Đang lưu...' : 'Lưu thay đổi'}
           </button>
@@ -141,27 +141,27 @@ export default function Profile() {
       </div>
 
       {/* ── Change password card ── */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">
-        <h3 className="font-semibold text-gray-700 flex items-center gap-2 text-sm">
+      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-6 space-y-5">
+        <h3 className="font-semibold text-zinc-200 flex items-center gap-2 text-sm">
           <Lock size={16} />
           Đổi mật khẩu
         </h3>
 
         {pwMsg && (
-          <div className="flex items-center gap-2 text-green-700 text-sm bg-green-50 border border-green-200 px-4 py-2.5 rounded-lg">
+          <div className="flex items-center gap-2 text-green-400 text-sm bg-green-950/40 border border-green-900 px-4 py-2.5 rounded-lg">
             <CheckCircle2 size={15} />
             {pwMsg}
           </div>
         )}
         {pwError && (
-          <div className="text-red-600 text-sm bg-red-50 border border-red-200 px-4 py-2.5 rounded-lg">
+          <div className="text-red-400 text-sm bg-red-950/40 border border-red-900 px-4 py-2.5 rounded-lg">
             {pwError}
           </div>
         )}
 
         <form onSubmit={handlePwSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-zinc-300 mb-1.5">
               Mật khẩu hiện tại
             </label>
             <input
@@ -170,11 +170,11 @@ export default function Profile() {
               onChange={(e) => setPwForm((p) => ({ ...p, old_password: e.target.value }))}
               required
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8b0000] placeholder:text-zinc-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-zinc-300 mb-1.5">
               Mật khẩu mới
             </label>
             <input
@@ -184,11 +184,11 @@ export default function Profile() {
               required
               minLength={6}
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8b0000] placeholder:text-zinc-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-zinc-300 mb-1.5">
               Xác nhận mật khẩu mới
             </label>
             <input
@@ -197,13 +197,13 @@ export default function Profile() {
               onChange={(e) => setPwForm((p) => ({ ...p, confirm_password: e.target.value }))}
               required
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8b0000] placeholder:text-zinc-500"
             />
           </div>
           <button
             type="submit"
             disabled={pwLoading}
-            className="px-6 py-2.5 bg-gray-800 hover:bg-gray-900 disabled:bg-gray-500 text-white text-sm font-semibold rounded-lg transition-colors"
+            className="px-6 py-2.5 bg-zinc-700 hover:bg-zinc-600 disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-colors"
           >
             {pwLoading ? 'Đang lưu...' : 'Đổi mật khẩu'}
           </button>

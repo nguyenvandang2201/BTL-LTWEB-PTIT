@@ -70,8 +70,8 @@ export default function AdminCategories() {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800">Quản lý Danh mục</h2>
-        <p className="text-sm text-gray-500 mt-1">Thêm, chỉnh sửa và xóa các danh mục khóa học.</p>
+        <h2 className="text-2xl font-bold text-zinc-100">Quản lý Danh mục</h2>
+        <p className="text-sm text-zinc-400 mt-1">Thêm, chỉnh sửa và xóa các danh mục khóa học.</p>
       </div>
 
       {/* Action error banner */}

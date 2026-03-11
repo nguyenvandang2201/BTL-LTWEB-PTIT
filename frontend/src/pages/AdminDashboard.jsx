@@ -53,8 +53,8 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-800">Dashboard</h2>
-        <p className="text-sm text-gray-500 mt-1">Tổng quan hệ thống học trực tuyến.</p>
+        <h2 className="text-2xl font-bold text-zinc-100">Dashboard</h2>
+        <p className="text-sm text-zinc-400 mt-1">Tổng quan hệ thống học trực tuyến.</p>
       </div>
 
       {/* Stats grid */}

@@ -41,8 +41,8 @@ export default function AdminCourses() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">Quản lý Khóa học</h2>
-          <p className="text-sm text-gray-500 mt-1">Tạo mới, chỉnh sửa và xóa khóa học.</p>
+          <h2 className="text-2xl font-bold text-zinc-100">Quản lý Khóa học</h2>
+          <p className="text-sm text-zinc-400 mt-1">Tạo mới, chỉnh sửa và xóa khóa học.</p>
         </div>
         <button
           onClick={() => navigate('/admin/courses/new')}

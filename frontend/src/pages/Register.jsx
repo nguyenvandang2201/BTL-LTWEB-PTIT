@@ -37,33 +37,33 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-zinc-900 rounded-2xl shadow-xl p-8 border border-zinc-800">
           {/* Logo / Title */}
           <div className="text-center mb-8">
-            <Link to="/" className="text-2xl font-extrabold text-blue-600">EduShop</Link>
-            <h2 className="text-xl font-semibold text-gray-700 mt-2">Tạo tài khoản mới</h2>
-            <p className="text-sm text-gray-400 mt-1">Tham gia cùng hàng nghìn học viên</p>
+            <Link to="/" className="text-2xl font-extrabold text-[#c0392b]">OnlineCourse</Link>
+            <h2 className="text-xl font-semibold text-zinc-200 mt-2">Tạo tài khoản mới</h2>
+            <p className="text-sm text-zinc-400 mt-1">Tham gia cùng hàng nghìn học viên</p>
           </div>
 
           {/* Error */}
           {error && (
-            <div className="mb-5 px-4 py-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg">
+            <div className="mb-5 px-4 py-3 bg-red-950/40 border border-red-900 text-red-400 text-sm rounded-lg">
               {error}
             </div>
           )}
 
           {/* Success */}
           {success && (
-            <div className="mb-5 px-4 py-3 bg-green-50 border border-green-200 text-green-600 text-sm rounded-lg">
+            <div className="mb-5 px-4 py-3 bg-green-950/40 border border-green-900 text-green-400 text-sm rounded-lg">
               {success}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                 Họ và tên
               </label>
               <input
@@ -73,12 +73,12 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 placeholder="Nguyễn Văn A"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8b0000] focus:border-transparent transition placeholder:text-zinc-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                 Email
               </label>
               <input
@@ -88,12 +88,12 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 placeholder="you@example.com"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8b0000] focus:border-transparent transition placeholder:text-zinc-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                 Mật khẩu
               </label>
               <input
@@ -104,22 +104,22 @@ export default function Register() {
                 required
                 placeholder="••••••••"
                 minLength={6}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8b0000] focus:border-transparent transition placeholder:text-zinc-500"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 rounded-lg transition-colors text-sm"
+              className="w-full bg-[#8b0000] hover:bg-[#a01828] disabled:opacity-60 text-white font-semibold py-3 rounded-lg transition-colors text-sm"
             >
               {loading ? 'Đang đăng ký...' : 'Tạo tài khoản'}
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-6">
+          <p className="text-center text-sm text-zinc-400 mt-6">
             Đã có tài khoản?{' '}
-            <Link to="/login" className="text-blue-600 font-medium hover:underline">
+            <Link to="/login" className="text-[#c0392b] font-medium hover:underline">
               Đăng nhập
             </Link>
           </p>

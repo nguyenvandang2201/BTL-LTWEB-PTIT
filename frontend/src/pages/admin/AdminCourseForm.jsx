@@ -176,15 +176,15 @@ export default function AdminCourseForm() {
       <div className="flex items-center gap-3">
         <button
           onClick={() => navigate('/admin/courses')}
-          className="p-2 rounded-lg hover:bg-gray-200 transition-colors text-gray-500"
+          className="p-2 rounded-lg hover:bg-zinc-800 transition-colors text-zinc-300"
         >
           <ArrowLeft size={20} />
         </button>
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="text-2xl font-bold text-zinc-100">
             {isEdit ? 'Chỉnh sửa khóa học' : 'Tạo khóa học mới'}
           </h2>
-          <p className="text-sm text-gray-400 mt-0.5">
+          <p className="text-sm text-zinc-400 mt-0.5">
             {isEdit
               ? 'Cập nhật thông tin và quản lý bài giảng.'
               : 'Điền thông tin, lưu để mở khóa phần thêm bài giảng.'}

@@ -169,7 +169,7 @@ export default function Learning() {
         />
       )}
 
-      <h1 className="text-xl font-bold text-gray-800 mb-5">{course.title}</h1>
+      <h1 className="text-xl font-bold text-zinc-100 mb-5">{course.title}</h1>
 
       {/* ===== Main split layout ===== */}
       <div className="flex flex-col lg:flex-row gap-6">
@@ -195,9 +195,9 @@ export default function Learning() {
           </div>
 
           {activeLesson && (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-zinc-400">
               Đang xem:{' '}
-              <span className="font-medium text-gray-700">
+              <span className="font-medium text-zinc-200">
                 {lessons.find((l) => l.lesson_id === activeLesson)?.title}
               </span>
             </p>
