@@ -204,28 +204,28 @@ export default function Learning() {
           )}
 
           {/* Review form */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5">
-            <h3 className="font-semibold text-gray-800 mb-4">Viết đánh giá của bạn</h3>
+          <div className="bg-zinc-900/80 backdrop-blur-md border border-zinc-700/60 rounded-xl p-5">
+            <h3 className="font-semibold text-zinc-200 mb-4">Viết đánh giá của bạn</h3>
             <form onSubmit={handleReviewSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Số sao</label>
+                <label className="block text-sm text-zinc-400 mb-1.5">Số sao</label>
                 <StarPicker value={rating} onChange={setRating} />
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Nội dung</label>
+                <label className="block text-sm text-zinc-400 mb-1.5">Nội dung</label>
                 <textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   required
                   rows={3}
                   placeholder="Chia sẻ trải nghiệm học của bạn..."
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2.5 bg-zinc-800/60 border border-zinc-700/60 text-zinc-200 placeholder-zinc-500 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#8b0000] focus:border-transparent"
                 />
               </div>
               <button
                 type="submit"
                 disabled={reviewMutation.isPending}
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-semibold rounded-lg transition-colors"
+                className="px-6 py-2.5 bg-[#8b0000] hover:bg-[#a01828] disabled:bg-[#8b0000]/50 text-white text-sm font-semibold rounded-lg transition-colors"
               >
                 {reviewMutation.isPending ? 'Đang gửi...' : 'Gửi đánh giá'}
               </button>
@@ -235,21 +235,21 @@ export default function Learning() {
           {/* Reviews list */}
           {reviews.length > 0 && (
             <div className="space-y-3">
-              <h3 className="font-semibold text-gray-800">Đánh giá ({reviews.length})</h3>
+              <h3 className="font-semibold text-zinc-200">Đánh giá ({reviews.length})</h3>
               {reviews.map((r) => (
-                <div key={r.review_id} className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+                <div key={r.review_id} className="bg-zinc-900/80 backdrop-blur-md border border-zinc-700/60 rounded-xl p-4">
                   <div className="flex items-center gap-2 mb-1">
-                    <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold uppercase">
+                    <div className="w-8 h-8 rounded-full bg-[#8b0000] text-white flex items-center justify-center text-xs font-bold uppercase">
                       {r.user?.full_name?.[0] || 'U'}
                     </div>
-                    <span className="text-sm font-semibold text-gray-800">{r.user?.full_name || 'Ẩn danh'}</span>
+                    <span className="text-sm font-semibold text-zinc-200">{r.user?.full_name || 'Ẩn danh'}</span>
                     <div className="flex gap-0.5 ml-auto">
                       {[1,2,3,4,5].map((s) => (
-                        <Star key={s} size={12} className={s <= r.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 fill-gray-300'} />
+                        <Star key={s} size={12} className={s <= r.rating ? 'text-yellow-400 fill-yellow-400' : 'text-zinc-600 fill-zinc-600'} />
                       ))}
                     </div>
                   </div>
-                  <p className="text-sm text-gray-600 pl-10">{r.comment}</p>
+                  <p className="text-sm text-zinc-400 pl-10">{r.comment}</p>
                 </div>
               ))}
             </div>
