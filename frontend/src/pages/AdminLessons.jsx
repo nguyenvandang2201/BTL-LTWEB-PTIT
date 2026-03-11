@@ -91,17 +91,17 @@ export default function AdminLessons() {
       </div>
 
       {/* Course selector */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-5">
+        <label className="block text-sm font-medium text-zinc-300 mb-2">
           Chọn khóa học
         </label>
         {loadingCourses ? (
-          <Loader2 size={20} className="animate-spin text-blue-500" />
+          <Loader2 size={20} className="animate-spin text-[#c0392b]" />
         ) : (
           <select
             value={selectedCourseId}
             onChange={(e) => setSelectedCourseId(e.target.value)}
-            className="w-full sm:w-96 px-4 py-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full sm:w-96 px-4 py-2.5 border border-zinc-700 rounded-lg text-sm bg-zinc-800 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
           >
             <option value="">-- Chọn khóa học --</option>
             {courses.map((c) => (
@@ -116,9 +116,9 @@ export default function AdminLessons() {
       {selectedCourseId && (
         <>
           {/* Add lesson form */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <h3 className="text-base font-semibold text-gray-700 mb-4 flex items-center gap-2">
-              <PlusCircle size={18} className="text-blue-600" />
+          <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-5">
+            <h3 className="text-base font-semibold text-zinc-200 mb-4 flex items-center gap-2">
+              <PlusCircle size={18} className="text-[#c0392b]" />
               Thêm bài giảng mới
             </h3>
             <form onSubmit={handleSubmit} className="space-y-3">
@@ -128,14 +128,14 @@ export default function AdminLessons() {
                   placeholder="Tên bài giảng *"
                   value={form.title}
                   onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-                  className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
                 />
                 <input
                   type="url"
                   placeholder="URL video *"
                   value={form.video_url}
                   onChange={(e) => setForm((p) => ({ ...p, video_url: e.target.value }))}
-                  className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
                 />
                 <input
                   type="number"
@@ -143,14 +143,14 @@ export default function AdminLessons() {
                   placeholder="Thứ tự *"
                   value={form.order_index}
                   onChange={(e) => setForm((p) => ({ ...p, order_index: e.target.value }))}
-                  className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
                 />
               </div>
               {formError && <p className="text-red-500 text-xs">{formError}</p>}
               <button
                 type="submit"
                 disabled={createMutation.isPending}
-                className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-semibold rounded-lg transition-colors"
+                className="flex items-center gap-2 px-5 py-2.5 bg-[#8b0000] hover:bg-[#a01828] disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-colors"
               >
                 {createMutation.isPending ? (
                   <Loader2 size={15} className="animate-spin" />
@@ -163,15 +163,15 @@ export default function AdminLessons() {
           </div>
 
           {/* Lessons table */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 overflow-hidden">
             {loadingLessons ? (
               <div className="flex justify-center items-center py-20">
-                <Loader2 size={28} className="animate-spin text-blue-500" />
+                <Loader2 size={28} className="animate-spin text-[#c0392b]" />
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left">
-                  <thead className="bg-gray-50 text-xs uppercase text-gray-500 border-b border-gray-200">
+                  <thead className="bg-zinc-800 text-xs uppercase text-zinc-400 border-b border-zinc-700">
                     <tr>
                       <th className="px-5 py-3.5 w-16">Thứ tự</th>
                       <th className="px-5 py-3.5">Tên bài giảng</th>
@@ -179,10 +179,10 @@ export default function AdminLessons() {
                       <th className="px-5 py-3.5 text-right">Hành động</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-zinc-800">
                     {lessons.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="px-5 py-12 text-center text-gray-400">
+                        <td colSpan={4} className="px-5 py-12 text-center text-zinc-500">
                           Khóa học này chưa có bài giảng nào.
                         </td>
                       </tr>
@@ -190,15 +190,15 @@ export default function AdminLessons() {
                       lessons.map((lesson, index) => (
                         <tr
                           key={lesson.lesson_id}
-                          className="hover:bg-gray-50 transition-colors"
+                          className="hover:bg-zinc-800 transition-colors"
                         >
-                          <td className="px-5 py-4 text-gray-500 font-mono text-xs">
+                          <td className="px-5 py-4 text-zinc-400 font-mono text-xs">
                             {lesson.order_index ?? index + 1}
                           </td>
-                          <td className="px-5 py-4 font-medium text-gray-800">
+                          <td className="px-5 py-4 font-medium text-zinc-200">
                             {lesson.title}
                           </td>
-                          <td className="px-5 py-4 text-gray-400 text-xs hidden md:table-cell max-w-xs truncate">
+                          <td className="px-5 py-4 text-zinc-500 text-xs hidden md:table-cell max-w-xs truncate">
                             {lesson.video_url || '—'}
                           </td>
                           <td className="px-5 py-4 text-right">

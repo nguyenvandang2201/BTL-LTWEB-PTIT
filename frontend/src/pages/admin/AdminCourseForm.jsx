@@ -15,10 +15,10 @@ import {
 // ── Section wrapper ───────────────────────────────────────────
 function Section({ title, subtitle, children }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">
-      <div className="border-b border-gray-100 pb-4">
-        <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
-        {subtitle && <p className="text-sm text-gray-400 mt-0.5">{subtitle}</p>}
+    <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-6 space-y-5">
+      <div className="border-b border-zinc-700 pb-4">
+        <h3 className="text-lg font-semibold text-zinc-100">{title}</h3>
+        {subtitle && <p className="text-sm text-zinc-400 mt-0.5">{subtitle}</p>}
       </div>
       {children}
     </div>
@@ -199,7 +199,7 @@ export default function AdminCourseForm() {
       >
         {/* Success indicator (create mode) */}
         {savedCourseId && !isEdit && (
-          <div className="flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg">
+          <div className="flex items-center gap-2 px-4 py-3 bg-green-950/40 border border-green-900 text-green-400 text-sm rounded-lg">
             <CheckCircle2 size={16} />
             Khóa học đã được tạo (ID: #{savedCourseId}). Bạn có thể thêm bài giảng bên dưới.
           </div>
@@ -208,7 +208,7 @@ export default function AdminCourseForm() {
         <form onSubmit={handleCourseSubmit} className="space-y-4">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-zinc-300 mb-1.5">
               Tên khóa học *
             </label>
             <input
@@ -216,14 +216,14 @@ export default function AdminCourseForm() {
               value={courseForm.title}
               onChange={(e) => setCourseForm((p) => ({ ...p, title: e.target.value }))}
               placeholder="Ví dụ: Học React từ cơ bản đến nâng cao"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
             />
           </div>
 
           {/* Price + Category */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                 Giá (VNĐ)
               </label>
               <input
@@ -232,17 +232,17 @@ export default function AdminCourseForm() {
                 value={courseForm.price}
                 onChange={(e) => setCourseForm((p) => ({ ...p, price: e.target.value }))}
                 placeholder="0 = Miễn phí"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                 Danh mục
               </label>
               <select
                 value={courseForm.category_id}
                 onChange={(e) => setCourseForm((p) => ({ ...p, category_id: e.target.value }))}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
               >
                 <option value="">-- Chọn danh mục --</option>
                 {categories.map((cat) => (
@@ -256,7 +256,7 @@ export default function AdminCourseForm() {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-zinc-300 mb-1.5">
               Mô tả
             </label>
             <textarea
@@ -264,13 +264,13 @@ export default function AdminCourseForm() {
               value={courseForm.description}
               onChange={(e) => setCourseForm((p) => ({ ...p, description: e.target.value }))}
               placeholder="Mô tả ngắn về nội dung và mục tiêu của khóa học..."
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm resize-none placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
             />
           </div>
 
           {/* Image URL */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-zinc-300 mb-1.5">
               URL ảnh bìa
             </label>
             <input
@@ -278,13 +278,13 @@ export default function AdminCourseForm() {
               value={courseForm.image_url}
               onChange={(e) => setCourseForm((p) => ({ ...p, image_url: e.target.value }))}
               placeholder="https://example.com/image.jpg"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
             />
             {courseForm.image_url && (
               <img
                 src={courseForm.image_url}
                 alt="preview"
-                className="mt-2 h-28 rounded-lg object-cover border border-gray-200"
+                className="mt-2 h-28 rounded-lg object-cover border border-zinc-700"
                 onError={(e) => (e.currentTarget.style.display = 'none')}
               />
             )}
@@ -298,7 +298,7 @@ export default function AdminCourseForm() {
             <button
               type="button"
               onClick={() => navigate('/admin/courses')}
-              className="px-5 py-2.5 border border-gray-300 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-5 py-2.5 border border-zinc-700 text-zinc-300 text-sm font-medium rounded-lg hover:bg-zinc-800 transition-colors"
             >
               Hủy
             </button>
@@ -336,14 +336,14 @@ export default function AdminCourseForm() {
                 placeholder="Tên bài giảng *"
                 value={lessonForm.title}
                 onChange={(e) => setLessonForm((p) => ({ ...p, title: e.target.value }))}
-                className="col-span-1 sm:col-span-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="col-span-1 sm:col-span-1 px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
               />
               <input
                 type="url"
                 placeholder="Link video (URL) *"
                 value={lessonForm.video_url}
                 onChange={(e) => setLessonForm((p) => ({ ...p, video_url: e.target.value }))}
-                className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
               />
               <input
                 type="number"
@@ -351,7 +351,7 @@ export default function AdminCourseForm() {
                 placeholder="Thứ tự *"
                 value={lessonForm.order_index}
                 onChange={(e) => setLessonForm((p) => ({ ...p, order_index: e.target.value }))}
-                className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
               />
             </div>
             {lessonError && <p className="text-red-500 text-xs">{lessonError}</p>}
@@ -370,27 +370,27 @@ export default function AdminCourseForm() {
           </form>
 
           {/* Lessons list */}
-          <div className="mt-4 rounded-xl border border-gray-200 overflow-hidden">
+          <div className="mt-4 rounded-xl border border-zinc-800 overflow-hidden">
             {lessons.length === 0 ? (
-              <p className="px-5 py-10 text-center text-gray-400 text-sm">
+              <p className="px-5 py-10 text-center text-zinc-500 text-sm">
                 Chưa có bài giảng nào. Hãy thêm bài giảng đầu tiên!
               </p>
             ) : (
-              <ul className="divide-y divide-gray-100">
+              <ul className="divide-y divide-zinc-800">
                 {lessons.map((lesson, index) => (
                   <li
                     key={lesson.lesson_id}
-                    className="flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-3 px-4 py-3.5 hover:bg-zinc-800 transition-colors"
                   >
-                    <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex items-center justify-center shrink-0">
+                    <span className="w-7 h-7 rounded-full bg-zinc-800 text-[#c0392b] text-xs font-bold flex items-center justify-center shrink-0">
                       {index + 1}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">
+                      <p className="text-sm font-medium text-zinc-200 truncate">
                         {lesson.title}
                       </p>
                       {lesson.video_url && (
-                        <p className="text-xs text-gray-400 truncate">{lesson.video_url}</p>
+                        <p className="text-xs text-zinc-500 truncate">{lesson.video_url}</p>
                       )}
                     </div>
                     <button

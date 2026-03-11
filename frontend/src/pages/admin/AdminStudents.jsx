@@ -35,20 +35,20 @@ function StudentModal({ studentId, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col">
+      <div className="bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col border border-zinc-800">
         {/* Modal header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
           <div>
-            <h3 className="text-lg font-bold text-gray-800">Chi tiết học viên</h3>
+            <h3 className="text-lg font-bold text-zinc-100">Chi tiết học viên</h3>
             {student && (
-              <p className="text-sm text-gray-400 mt-0.5">
+              <p className="text-sm text-zinc-400 mt-0.5">
                 {student.full_name} — {student.email}
               </p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-2 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 transition-colors"
           >
             <X size={20} />
           </button>
@@ -57,7 +57,7 @@ function StudentModal({ studentId, onClose }) {
         {/* Loading / Error */}
         {isLoading && (
           <div className="flex justify-center items-center flex-1 py-16">
-            <Loader2 size={32} className="animate-spin text-blue-500" />
+            <Loader2 size={32} className="animate-spin text-[#c0392b]" />
           </div>
         )}
 
@@ -70,13 +70,13 @@ function StudentModal({ studentId, onClose }) {
         {!isLoading && !isError && student && (
           <>
             {/* Tabs */}
-            <div className="flex border-b border-gray-200 px-6">
+            <div className="flex border-b border-zinc-800 px-6">
               <button
                 onClick={() => setActiveTab('courses')}
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === 'courses'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-[#c0392b] text-[#c0392b]'
+                    : 'border-transparent text-zinc-400 hover:text-zinc-200'
                 }`}
               >
                 <BookOpen size={15} />
@@ -86,8 +86,8 @@ function StudentModal({ studentId, onClose }) {
                 onClick={() => setActiveTab('reviews')}
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === 'reviews'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-[#c0392b] text-[#c0392b]'
+                    : 'border-transparent text-zinc-400 hover:text-zinc-200'
                 }`}
               >
                 <Star size={15} />
@@ -101,11 +101,11 @@ function StudentModal({ studentId, onClose }) {
               {activeTab === 'courses' && (
                 <div>
                   {enrollments.length === 0 ? (
-                    <p className="text-center text-gray-400 py-10 text-sm">
+                    <p className="text-center text-zinc-500 py-10 text-sm">
                       Học viên chưa mua khóa học nào.
                     </p>
                   ) : (
-                    <ul className="divide-y divide-gray-100">
+                    <ul className="divide-y divide-zinc-800">
                       {enrollments.map((enroll) => {
                         const course = enroll.course || enroll;
                         return (
@@ -114,21 +114,21 @@ function StudentModal({ studentId, onClose }) {
                               <img
                                 src={course.image_url}
                                 alt={course.title}
-                                className="w-12 h-12 rounded-lg object-cover border border-gray-200 shrink-0"
+                                className="w-12 h-12 rounded-lg object-cover border border-zinc-700 shrink-0"
                               />
                             )}
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-gray-800 text-sm truncate">
+                              <p className="font-medium text-zinc-200 text-sm truncate">
                                 {course.title}
                               </p>
                               {enroll.enrolled_at && (
-                                <p className="text-xs text-gray-400 mt-0.5">
+                                <p className="text-xs text-zinc-500 mt-0.5">
                                   Đăng ký:{' '}
                                   {new Date(enroll.enrolled_at).toLocaleDateString('vi-VN')}
                                 </p>
                               )}
                             </div>
-                            <span className="text-xs text-green-600 bg-green-50 border border-green-200 px-2.5 py-1 rounded-full font-medium shrink-0">
+                            <span className="text-xs text-green-400 bg-green-950/40 border border-green-900 px-2.5 py-1 rounded-full font-medium shrink-0">
                               Đã mua
                             </span>
                           </li>
@@ -143,7 +143,7 @@ function StudentModal({ studentId, onClose }) {
               {activeTab === 'reviews' && (
                 <div>
                   {reviews.length === 0 ? (
-                    <p className="text-center text-gray-400 py-10 text-sm">
+                    <p className="text-center text-zinc-500 py-10 text-sm">
                       Học viên chưa có đánh giá nào.
                     </p>
                   ) : (
@@ -151,12 +151,12 @@ function StudentModal({ studentId, onClose }) {
                       {reviews.map((review) => (
                         <li
                           key={review.review_id}
-                          className="border border-gray-100 rounded-xl p-4 bg-gray-50"
+                          className="border border-zinc-700 rounded-xl p-4 bg-zinc-800"
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="text-xs font-medium text-gray-600">
+                                <span className="text-xs font-medium text-zinc-300">
                                   {review.course?.title || `Khóa #${review.course_id}`}
                                 </span>
                                 <span className="flex gap-0.5">
@@ -173,7 +173,7 @@ function StudentModal({ studentId, onClose }) {
                                   ))}
                                 </span>
                               </div>
-                              <p className="text-sm text-gray-700">{review.comment}</p>
+                              <p className="text-sm text-zinc-300">{review.comment}</p>
                             </div>
                             <button
                               onClick={() => handleDeleteReview(review)}
@@ -228,10 +228,10 @@ export default function AdminStudents() {
       )}
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
-            <Loader2 size={32} className="animate-spin text-blue-500" />
+            <Loader2 size={32} className="animate-spin text-[#c0392b]" />
           </div>
         ) : isError ? (
           <div className="text-center py-20 text-red-500 text-sm">
@@ -240,7 +240,7 @@ export default function AdminStudents() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="bg-gray-50 text-xs uppercase text-gray-500 border-b border-gray-200">
+              <thead className="bg-zinc-800 text-xs uppercase text-zinc-400 border-b border-zinc-700">
                 <tr>
                   <th className="px-5 py-3.5 w-14">ID</th>
                   <th className="px-5 py-3.5">Họ tên</th>
@@ -249,10 +249,10 @@ export default function AdminStudents() {
                   <th className="px-5 py-3.5 text-right">Hành động</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-zinc-800">
                 {students.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-5 py-12 text-center text-gray-400">
+                    <td colSpan={5} className="px-5 py-12 text-center text-zinc-500">
                       Chưa có học viên nào.
                     </td>
                   </tr>
@@ -260,25 +260,25 @@ export default function AdminStudents() {
                   students.map((student) => (
                     <tr
                       key={student.user_id}
-                      className="hover:bg-gray-50 transition-colors"
+                      className="hover:bg-zinc-800 transition-colors"
                     >
-                      <td className="px-5 py-4 text-gray-400 font-mono text-xs">
+                      <td className="px-5 py-4 text-zinc-500 font-mono text-xs">
                         #{student.user_id}
                       </td>
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold uppercase shrink-0">
+                          <div className="w-9 h-9 rounded-full bg-[#8b0000] text-white flex items-center justify-center text-xs font-bold uppercase shrink-0">
                             {student.full_name?.[0] || 'U'}
                           </div>
-                          <span className="font-medium text-gray-800">
+                          <span className="font-medium text-zinc-200">
                             {student.full_name}
                           </span>
                         </div>
                       </td>
-                      <td className="px-5 py-4 text-gray-500 hidden sm:table-cell">
+                      <td className="px-5 py-4 text-zinc-400 hidden sm:table-cell">
                         {student.email}
                       </td>
-                      <td className="px-5 py-4 text-gray-400 text-xs hidden md:table-cell">
+                      <td className="px-5 py-4 text-zinc-500 text-xs hidden md:table-cell">
                         {student.created_at
                           ? new Date(student.created_at).toLocaleDateString('vi-VN')
                           : '—'}
@@ -286,7 +286,7 @@ export default function AdminStudents() {
                       <td className="px-5 py-4 text-right">
                         <button
                           onClick={() => setSelectedStudentId(student.user_id)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-colors"
                         >
                           <Eye size={13} />
                           Xem chi tiết

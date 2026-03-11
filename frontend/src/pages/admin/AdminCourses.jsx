@@ -46,7 +46,7 @@ export default function AdminCourses() {
         </div>
         <button
           onClick={() => navigate('/admin/courses/new')}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 bg-[#8b0000] hover:bg-[#a01828] text-white text-sm font-semibold rounded-lg transition-colors"
         >
           <PlusCircle size={16} />
           Tạo khóa học mới
@@ -54,10 +54,10 @@ export default function AdminCourses() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
-            <Loader2 size={32} className="animate-spin text-blue-500" />
+            <Loader2 size={32} className="animate-spin text-[#c0392b]" />
           </div>
         ) : isError ? (
           <div className="text-center py-20 text-red-500 text-sm">
@@ -66,7 +66,7 @@ export default function AdminCourses() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="bg-gray-50 text-xs uppercase text-gray-500 border-b border-gray-200">
+              <thead className="bg-zinc-800 text-xs uppercase text-zinc-400 border-b border-zinc-700">
                 <tr>
                   <th className="px-5 py-3.5 w-14">ID</th>
                   <th className="px-5 py-3.5">Tên khóa học</th>
@@ -75,17 +75,17 @@ export default function AdminCourses() {
                   <th className="px-5 py-3.5 text-right">Hành động</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-zinc-800">
                 {courses.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-5 py-12 text-center text-gray-400">
+                    <td colSpan={5} className="px-5 py-12 text-center text-zinc-500">
                       Chưa có khóa học nào. Hãy tạo khóa học đầu tiên!
                     </td>
                   </tr>
                 ) : (
                   courses.map((course) => (
-                    <tr key={course.course_id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-5 py-4 text-gray-400 font-mono text-xs">
+                    <tr key={course.course_id} className="hover:bg-zinc-800 transition-colors">
+                      <td className="px-5 py-4 text-zinc-500 font-mono text-xs">
                         #{course.course_id}
                       </td>
                       <td className="px-5 py-4">
@@ -94,25 +94,25 @@ export default function AdminCourses() {
                             <img
                               src={course.image_url}
                               alt={course.title}
-                              className="w-10 h-10 rounded-lg object-cover border border-gray-200 shrink-0 hidden sm:block"
+                              className="w-10 h-10 rounded-lg object-cover border border-zinc-700 shrink-0 hidden sm:block"
                             />
                           )}
-                          <span className="font-medium text-gray-800 line-clamp-2">
+                          <span className="font-medium text-zinc-200 line-clamp-2">
                             {course.title}
                           </span>
                         </div>
                       </td>
-                      <td className="px-5 py-4 text-gray-500 hidden md:table-cell">
+                      <td className="px-5 py-4 text-zinc-400 hidden md:table-cell">
                         {course.category?.name || '—'}
                       </td>
-                      <td className="px-5 py-4 text-blue-600 font-semibold hidden sm:table-cell">
+                      <td className="px-5 py-4 text-[#c0392b] font-semibold hidden sm:table-cell">
                         {formatPrice(course.price)}
                       </td>
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-2 justify-end">
                           <button
                             onClick={() => navigate(`/admin/courses/${course.course_id}/edit`)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-colors"
                           >
                             <Pencil size={13} />
                             Sửa

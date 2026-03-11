@@ -76,16 +76,16 @@ export default function AdminCategories() {
 
       {/* Action error banner */}
       {actionError && (
-        <div className="flex items-start gap-3 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
+        <div className="flex items-start gap-3 px-4 py-3 bg-red-950/40 border border-red-900 text-red-400 text-sm rounded-lg">
           <span className="shrink-0 mt-0.5">⚠️</span>
           <span>{actionError}</span>
         </div>
       )}
 
       {/* ── Add form ── */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-        <h3 className="text-base font-semibold text-gray-700 mb-4 flex items-center gap-2">
-          <PlusCircle size={18} className="text-blue-600" />
+      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-5">
+        <h3 className="text-base font-semibold text-zinc-200 mb-4 flex items-center gap-2">
+          <PlusCircle size={18} className="text-[#c0392b]" />
           Thêm danh mục mới
         </h3>
         <form onSubmit={handleCreate} className="flex flex-col sm:flex-row gap-3">
@@ -95,7 +95,7 @@ export default function AdminCategories() {
               placeholder="Tên danh mục *"
               value={form.name}
               onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
             />
           </div>
           <div className="flex-1">
@@ -104,13 +104,13 @@ export default function AdminCategories() {
               placeholder="Mô tả (tuỳ chọn)"
               value={form.description}
               onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
             />
           </div>
           <button
             type="submit"
             disabled={createMutation.isPending}
-            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-semibold rounded-lg transition-colors shrink-0"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#8b0000] hover:bg-[#a01828] disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-colors shrink-0"
           >
             {createMutation.isPending ? (
               <Loader2 size={16} className="animate-spin" />
@@ -124,10 +124,10 @@ export default function AdminCategories() {
       </div>
 
       {/* ── Table ── */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
-            <Loader2 size={32} className="animate-spin text-blue-500" />
+            <Loader2 size={32} className="animate-spin text-[#c0392b]" />
           </div>
         ) : isError ? (
           <div className="text-center py-20 text-red-500 text-sm">
@@ -136,7 +136,7 @@ export default function AdminCategories() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="bg-gray-50 text-xs uppercase text-gray-500 border-b border-gray-200">
+              <thead className="bg-zinc-800 text-xs uppercase text-zinc-400 border-b border-zinc-700">
                 <tr>
                   <th className="px-5 py-3.5 w-16">ID</th>
                   <th className="px-5 py-3.5">Tên danh mục</th>
@@ -144,22 +144,22 @@ export default function AdminCategories() {
                   <th className="px-5 py-3.5 text-right">Hành động</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-zinc-800">
                 {categories.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-5 py-12 text-center text-gray-400">
+                    <td colSpan={4} className="px-5 py-12 text-center text-zinc-500">
                       Chưa có danh mục nào. Hãy thêm danh mục đầu tiên!
                     </td>
                   </tr>
                 ) : (
                   categories.map((cat) => (
-                    <tr key={cat.category_id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-5 py-4 text-gray-400 font-mono text-xs">
+                    <tr key={cat.category_id} className="hover:bg-zinc-800 transition-colors">
+                      <td className="px-5 py-4 text-zinc-500 font-mono text-xs">
                         #{cat.category_id}
                       </td>
-                      <td className="px-5 py-4 font-medium text-gray-800">{cat.name}</td>
-                      <td className="px-5 py-4 text-gray-500 hidden md:table-cell">
-                        {cat.description || <span className="italic text-gray-300">Không có</span>}
+                      <td className="px-5 py-4 font-medium text-zinc-200">{cat.name}</td>
+                      <td className="px-5 py-4 text-zinc-400 hidden md:table-cell">
+                        {cat.description || <span className="italic text-zinc-600">Không có</span>}
                       </td>
                       <td className="px-5 py-4 text-right">
                         <button

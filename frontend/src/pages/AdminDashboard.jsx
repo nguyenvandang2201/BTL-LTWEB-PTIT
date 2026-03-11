@@ -8,13 +8,13 @@ function formatPrice(price) {
 
 function StatCard({ icon: Icon, label, value, color }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex items-center gap-4">
+    <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-6 flex items-center gap-4">
       <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${color} shrink-0`}>
         <Icon size={22} className="text-white" />
       </div>
       <div>
-        <p className="text-sm text-gray-500">{label}</p>
-        <p className="text-2xl font-bold text-gray-800 mt-0.5">{value}</p>
+        <p className="text-sm text-zinc-400">{label}</p>
+        <p className="text-2xl font-bold text-zinc-100 mt-0.5">{value}</p>
       </div>
     </div>
   );
@@ -65,28 +65,28 @@ export default function AdminDashboard() {
       </div>
 
       {/* Recent courses */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-        <h3 className="text-base font-semibold text-gray-700 mb-4">Khóa học mới nhất</h3>
+      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-5">
+        <h3 className="text-base font-semibold text-zinc-200 mb-4">Khóa học mới nhất</h3>
         {courses.length === 0 ? (
-          <p className="text-gray-400 text-sm py-6 text-center">Chưa có khóa học nào.</p>
+          <p className="text-zinc-500 text-sm py-6 text-center">Chưa có khóa học nào.</p>
         ) : (
-          <ul className="divide-y divide-gray-100">
+          <ul className="divide-y divide-zinc-800">
             {courses.slice(0, 5).map((course) => (
               <li key={course.course_id} className="py-3.5 flex items-center gap-3">
                 {course.image_url && (
                   <img
                     src={course.image_url}
                     alt={course.title}
-                    className="w-10 h-10 rounded-lg object-cover border border-gray-100 shrink-0"
+                    className="w-10 h-10 rounded-lg object-cover border border-zinc-700 shrink-0"
                   />
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-800 truncate">{course.title}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-sm font-medium text-zinc-200 truncate">{course.title}</p>
+                  <p className="text-xs text-zinc-500 mt-0.5">
                     {course.category?.name || '—'}
                   </p>
                 </div>
-                <span className="text-xs text-blue-600 font-semibold shrink-0">
+                <span className="text-xs text-[#c0392b] font-semibold shrink-0">
                   {course.price > 0 ? formatPrice(course.price) : 'Miễn phí'}
                 </span>
               </li>
@@ -96,24 +96,24 @@ export default function AdminDashboard() {
       </div>
 
       {/* Recent students */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-        <h3 className="text-base font-semibold text-gray-700 mb-4">Học viên mới nhất</h3>
+      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-5">
+        <h3 className="text-base font-semibold text-zinc-200 mb-4">Học viên mới nhất</h3>
         {students.length === 0 ? (
-          <p className="text-gray-400 text-sm py-6 text-center">Chưa có học viên nào.</p>
+          <p className="text-zinc-500 text-sm py-6 text-center">Chưa có học viên nào.</p>
         ) : (
-          <ul className="divide-y divide-gray-100">
+          <ul className="divide-y divide-zinc-800">
             {students.slice(0, 5).map((student) => (
               <li key={student.user_id} className="py-3 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold uppercase shrink-0">
+                <div className="w-9 h-9 rounded-full bg-[#8b0000] text-white flex items-center justify-center text-xs font-bold uppercase shrink-0">
                   {student.full_name?.[0] || 'U'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-800 truncate">
+                  <p className="text-sm font-medium text-zinc-200 truncate">
                     {student.full_name}
                   </p>
-                  <p className="text-xs text-gray-400 truncate">{student.email}</p>
+                  <p className="text-xs text-zinc-500 truncate">{student.email}</p>
                 </div>
-                <span className="text-xs text-gray-400 shrink-0 hidden sm:block">
+                <span className="text-xs text-zinc-500 shrink-0 hidden sm:block">
                   {student.created_at
                     ? new Date(student.created_at).toLocaleDateString('vi-VN')
                     : '—'}
