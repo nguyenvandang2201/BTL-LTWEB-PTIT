@@ -9,7 +9,14 @@ export function AuthProvider({ children }) {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     if (token && user) {
-      setAuth({ token, user: JSON.parse(user) });
+      try {
+        const parsedUser = JSON.parse(user);
+        setAuth({ token, user: parsedUser });
+      } catch {
+        // Dữ liệu localStorage bị hỏng, xóa đi để reset
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
     }
   }, []);
 
