@@ -8,7 +8,7 @@ function formatPrice(price) {
 
 function StatCard({ icon: Icon, label, value, color }) {
   return (
-    <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-6 flex items-center gap-4">
+    <div className="bg-zinc-900/70 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800/60 p-6 flex items-center gap-4 hover:border-[#8b0000]/40 hover:shadow-lg hover:shadow-red-900/10 transition-all">
       <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${color} shrink-0`}>
         <Icon size={22} className="text-white" />
       </div>
@@ -65,7 +65,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Recent courses */}
-      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-5">
+      <div className="bg-zinc-900/70 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800/60 p-5">
         <h3 className="text-base font-semibold text-zinc-200 mb-4">Khóa học mới nhất</h3>
         {courses.length === 0 ? (
           <p className="text-zinc-500 text-sm py-6 text-center">Chưa có khóa học nào.</p>

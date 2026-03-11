@@ -54,7 +54,7 @@ export default function AdminCourses() {
       </div>
 
       {/* Table */}
-      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 overflow-hidden">
+      <div className="bg-zinc-900/70 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800/60 overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 size={32} className="animate-spin text-[#c0392b]" />

@@ -15,7 +15,7 @@ import {
 // ── Section wrapper ───────────────────────────────────────────
 function Section({ title, subtitle, children }) {
   return (
-    <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-6 space-y-5">
+    <div className="bg-zinc-900/70 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800/60 p-6 space-y-5">
       <div className="border-b border-zinc-700 pb-4">
         <h3 className="text-lg font-semibold text-zinc-100">{title}</h3>
         {subtitle && <p className="text-sm text-zinc-400 mt-0.5">{subtitle}</p>}

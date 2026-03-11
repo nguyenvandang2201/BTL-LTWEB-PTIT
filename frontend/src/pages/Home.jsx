@@ -12,7 +12,7 @@ function CourseCard({ course }) {
   return (
     <Link
       to={`/courses/${course.course_id}`}
-      className="group bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 hover:border-[#8b0000]/60 hover:shadow-lg hover:shadow-red-900/20 transition-all duration-300"
+      className="group bg-zinc-900/70 backdrop-blur-sm rounded-xl overflow-hidden border border-zinc-800/60 hover:border-[#8b0000]/60 hover:shadow-lg hover:shadow-red-900/20 transition-all duration-300"
     >
       <div className="aspect-video w-full overflow-hidden bg-zinc-800 relative">
         <img

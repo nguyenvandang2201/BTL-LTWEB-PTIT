@@ -83,7 +83,7 @@ export default function AdminCategories() {
       )}
 
       {/* ── Add form ── */}
-      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-5">
+      <div className="bg-zinc-900/70 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800/60 p-5">
         <h3 className="text-base font-semibold text-zinc-200 mb-4 flex items-center gap-2">
           <PlusCircle size={18} className="text-[#c0392b]" />
           Thêm danh mục mới
@@ -124,7 +124,7 @@ export default function AdminCategories() {
       </div>
 
       {/* ── Table ── */}
-      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 overflow-hidden">
+      <div className="bg-zinc-900/70 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800/60 overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 size={32} className="animate-spin text-[#c0392b]" />
@@ -165,7 +165,7 @@ export default function AdminCategories() {
                         <button
                           onClick={() => handleDelete(cat)}
                           disabled={deleteMutation.isPending}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-400 bg-red-950/30 hover:bg-red-950/60 border border-red-900/60 rounded-lg transition-colors disabled:opacity-50"
                         >
                           <Trash2 size={13} />
                           Xóa

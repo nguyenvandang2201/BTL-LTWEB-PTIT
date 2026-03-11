@@ -12,7 +12,7 @@ export default function MyCourses() {
   const enrollments = data?.data || data || [];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
+    <div className="max-w-6xl mx-auto px-4 py-10 page-enter">
       <h1 className="text-3xl font-bold text-zinc-100 mb-1">Khóa học của tôi</h1>
       <p className="text-zinc-400 mb-8">Danh sách các khóa học bạn đã đăng ký.</p>
 
@@ -48,7 +48,7 @@ export default function MyCourses() {
             return (
               <div
                 key={enrollment.enrollment_id || course.course_id}
-                className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 overflow-hidden group"
+                className="bg-zinc-900/70 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800/60 hover:border-[#8b0000]/40 hover:shadow-lg hover:shadow-red-900/20 transition-all overflow-hidden group"
               >
                 <div className="aspect-video bg-zinc-800 overflow-hidden">
                   <img

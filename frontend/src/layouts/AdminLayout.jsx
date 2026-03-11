@@ -27,9 +27,16 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="flex h-screen bg-zinc-950 overflow-hidden">
+    <div className="flex h-screen overflow-hidden relative">
+      {/* ── Animated background orbs ── */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden" style={{ zIndex: -1 }}>
+        <div className="bg-orb bg-orb-1" style={{ top: '-20%', right: '-5%' }} />
+        <div className="bg-orb bg-orb-2" style={{ bottom: '-15%', left: '-10%' }} />
+        <div className="bg-orb bg-orb-3" style={{ top: '30%', left: '20%' }} />
+      </div>
+
       {/* ── Sidebar ── */}
-      <aside className="w-64 bg-zinc-900 text-white flex flex-col shrink-0 h-screen border-r border-zinc-800">
+      <aside className="w-64 bg-zinc-900/80 backdrop-blur-md text-white flex flex-col shrink-0 h-screen border-r border-zinc-800/60">
         {/* Header */}
         <div className="px-6 py-5 border-b border-zinc-800">
           <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">
@@ -80,15 +87,15 @@ export default function AdminLayout() {
       {/* ── Main content ── */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar */}
-        <header className="bg-zinc-900 border-b border-zinc-800 px-6 py-4 shrink-0 flex items-center justify-between">
+        <header className="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800/60 px-6 py-4 shrink-0 flex items-center justify-between">
           <h1 className="text-base font-semibold text-zinc-200">Trang quản trị</h1>
-          <span className="text-xs text-zinc-400 bg-zinc-800 px-3 py-1 rounded-full">
+          <span className="text-xs text-zinc-400 bg-zinc-800/80 px-3 py-1 rounded-full">
             Admin
           </span>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-zinc-950 p-6">
+        <main className="flex-1 overflow-y-auto p-6">
           <Outlet />
         </main>
       </div>

@@ -70,14 +70,14 @@ export default function Profile() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10 space-y-8">
+    <div className="max-w-2xl mx-auto px-4 py-10 space-y-8 page-enter">
       <div>
         <h1 className="text-3xl font-bold text-zinc-100">Hồ sơ cá nhân</h1>
         <p className="text-zinc-400 mt-1">Quản lý thông tin tài khoản của bạn.</p>
       </div>
 
       {/* ── Profile card ── */}
-      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-6 space-y-5">
+      <div className="bg-zinc-900/70 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800/60 p-6 space-y-5">
         {/* Avatar + info */}
         <div className="flex items-center gap-4 pb-4 border-b border-zinc-800">
           <div className="w-14 h-14 rounded-full bg-[#8b0000] text-white flex items-center justify-center text-2xl font-bold uppercase shrink-0">
@@ -141,7 +141,7 @@ export default function Profile() {
       </div>
 
       {/* ── Change password card ── */}
-      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-6 space-y-5">
+      <div className="bg-zinc-900/70 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800/60 p-6 space-y-5">
         <h3 className="font-semibold text-zinc-200 flex items-center gap-2 text-sm">
           <Lock size={16} />
           Đổi mật khẩu

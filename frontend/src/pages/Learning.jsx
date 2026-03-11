@@ -37,21 +37,21 @@ function StarPicker({ value, onChange }) {
 // ── Modal / Popup ──────────────────────────────────────────────
 function Modal({ message, type = 'error', onClose }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center space-y-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
+      <div className="bg-zinc-900/90 border border-zinc-700 rounded-2xl shadow-2xl shadow-black/60 p-8 max-w-sm w-full text-center space-y-4">
         <div
           className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto text-2xl ${
             type === 'success'
-              ? 'bg-green-100 text-green-600'
-              : 'bg-red-100 text-red-600'
+              ? 'bg-green-900/40 text-green-400 border border-green-800'
+              : 'bg-red-900/40 text-red-400 border border-red-800'
           }`}
         >
           {type === 'success' ? '✓' : '🔒'}
         </div>
-        <p className="text-gray-700 font-medium">{message}</p>
+        <p className="text-zinc-200 font-medium">{message}</p>
         <button
           onClick={onClose}
-          className="mt-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+          className="mt-2 px-6 py-2 bg-[#8b0000] hover:bg-[#a01828] text-white rounded-lg transition-colors text-sm font-medium"
         >
           Đóng
         </button>
@@ -145,14 +145,14 @@ export default function Learning() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-96">
-        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-[#8b0000] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   if (isError || !course) {
     return (
-      <div className="text-center py-32 text-red-500">
+      <div className="text-center py-32 text-red-400">
         Không thể tải dữ liệu khóa học. Vui lòng thử lại.
       </div>
     );
@@ -258,13 +258,13 @@ export default function Learning() {
 
         {/* RIGHT: Lesson list */}
         <div className="w-full lg:w-80 shrink-0">
-          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-            <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
-              <h3 className="font-semibold text-gray-800 text-sm">
+          <div className="bg-zinc-900/80 backdrop-blur-md border border-zinc-700/60 rounded-xl overflow-hidden">
+            <div className="px-4 py-3 bg-zinc-800/60 border-b border-zinc-700/60">
+              <h3 className="font-semibold text-zinc-200 text-sm">
                 Nội dung khóa học ({lessons.length} bài)
               </h3>
             </div>
-            <ul className="divide-y divide-gray-100 max-h-[70vh] overflow-y-auto">
+            <ul className="divide-y divide-zinc-800/60 max-h-[70vh] overflow-y-auto">
               {lessons.map((lesson, index) => {
                 const isActive = activeLesson === lesson.lesson_id;
                 const isLoadingThis = loadingLesson === lesson.lesson_id;
@@ -273,30 +273,30 @@ export default function Learning() {
                     <button
                       onClick={() => handleLessonClick(lesson)}
                       disabled={isLoadingThis}
-                      className={`w-full text-left flex items-center gap-3 px-4 py-3.5 hover:bg-blue-50 transition-colors ${
-                        isActive ? 'bg-blue-50 border-l-4 border-blue-600' : ''
+                      className={`w-full text-left flex items-center gap-3 px-4 py-3.5 hover:bg-[#8b0000]/20 transition-colors ${
+                        isActive ? 'bg-[#8b0000]/25 border-l-4 border-[#c0392b]' : ''
                       }`}
                     >
                       <span
                         className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
                           isActive
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100 text-gray-500'
+                            ? 'bg-[#8b0000] text-white'
+                            : 'bg-zinc-800 text-zinc-400'
                         }`}
                       >
                         {isLoadingThis ? (
-                          <span className="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                          <span className="w-3 h-3 border-2 border-[#c0392b] border-t-transparent rounded-full animate-spin" />
                         ) : (
                           index + 1
                         )}
                       </span>
-                      <span className={`text-sm flex-1 line-clamp-2 ${isActive ? 'text-blue-700 font-medium' : 'text-gray-700'}`}>
+                      <span className={`text-sm flex-1 line-clamp-2 ${isActive ? 'text-[#c0392b] font-medium' : 'text-zinc-300'}`}>
                         {lesson.title}
                       </span>
                       {lesson.is_locked && !isActive ? (
-                        <Lock size={14} className="text-gray-400 shrink-0" />
+                        <Lock size={14} className="text-zinc-500 shrink-0" />
                       ) : (
-                        <ChevronRight size={14} className="text-gray-400 shrink-0" />
+                        <ChevronRight size={14} className="text-zinc-500 shrink-0" />
                       )}
                     </button>
                   </li>

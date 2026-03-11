@@ -7,9 +7,16 @@ export default function MainLayout() {
   const { auth, logout } = useAuth();
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-950">
+    <div className="flex flex-col min-h-screen relative overflow-hidden">
+      {/* ── Animated background orbs ── */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden" style={{ zIndex: -1 }}>
+        <div className="bg-orb bg-orb-1" style={{ top: '-15%', right: '-8%' }} />
+        <div className="bg-orb bg-orb-2" style={{ bottom: '-10%', left: '-10%' }} />
+        <div className="bg-orb bg-orb-3" style={{ top: '35%', left: '25%' }} />
+      </div>
+
       {/* Navbar */}
-      <header className="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50">
+      <header className="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800/60 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 text-xl font-bold text-[#c0392b]">
             <BookOpen size={24} />
@@ -58,7 +65,7 @@ export default function MainLayout() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-black border-t border-zinc-800 text-zinc-400 text-sm text-center py-6 mt-auto">
+      <footer className="bg-black/60 backdrop-blur-md border-t border-zinc-800/60 text-zinc-400 text-sm text-center py-6 mt-auto">
         <p>&copy; {new Date().getFullYear()} OnlineCourse. All rights reserved.</p>
       </footer>
     </div>

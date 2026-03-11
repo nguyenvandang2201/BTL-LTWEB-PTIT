@@ -42,9 +42,9 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 relative">
       <div className="w-full max-w-md">
-        <div className="bg-zinc-900 rounded-2xl shadow-xl p-8 border border-zinc-800">
+        <div className="bg-zinc-900/70 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/60 p-8 border border-zinc-700/50">
           {/* Logo / Title */}
           <div className="text-center mb-8">
             <Link to="/" className="text-2xl font-extrabold text-[#c0392b]">OnlineCourse</Link>

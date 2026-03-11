@@ -69,7 +69,7 @@ export default function CourseDetail() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-40">
-        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-[#8b0000] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -86,7 +86,7 @@ export default function CourseDetail() {
   const reviews = course.reviews || [];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
+    <div className="max-w-6xl mx-auto px-4 py-10 page-enter">
 
       {/* ===== TOP: Course info ===== */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
@@ -125,7 +125,7 @@ export default function CourseDetail() {
 
         {/* Right: price + enroll */}
         <div className="lg:col-span-1">
-          <div className="sticky top-20 bg-zinc-900 border border-zinc-700 rounded-2xl shadow-lg p-6 space-y-5">
+          <div className="sticky top-20 bg-zinc-900/80 backdrop-blur-md border border-zinc-700/60 rounded-2xl shadow-xl shadow-black/40 p-6 space-y-5">
             <div className="text-4xl font-extrabold text-[#c0392b]">
               {formatPrice(course.price)}
             </div>

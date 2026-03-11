@@ -91,7 +91,7 @@ export default function AdminLessons() {
       </div>
 
       {/* Course selector */}
-      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-5">
+      <div className="bg-zinc-900/70 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800/60 p-5">
         <label className="block text-sm font-medium text-zinc-300 mb-2">
           Chọn khóa học
         </label>
@@ -116,7 +116,7 @@ export default function AdminLessons() {
       {selectedCourseId && (
         <>
           {/* Add lesson form */}
-          <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-5">
+          <div className="bg-zinc-900/70 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800/60 p-5">
             <h3 className="text-base font-semibold text-zinc-200 mb-4 flex items-center gap-2">
               <PlusCircle size={18} className="text-[#c0392b]" />
               Thêm bài giảng mới
@@ -163,7 +163,7 @@ export default function AdminLessons() {
           </div>
 
           {/* Lessons table */}
-          <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 overflow-hidden">
+          <div className="bg-zinc-900/70 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800/60 overflow-hidden">
             {loadingLessons ? (
               <div className="flex justify-center items-center py-20">
                 <Loader2 size={28} className="animate-spin text-[#c0392b]" />
