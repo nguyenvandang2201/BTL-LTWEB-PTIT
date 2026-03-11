@@ -82,7 +82,8 @@ export default function AdminCourseForm() {
     queryFn: () => getAdminLessons(savedCourseId),
     enabled: !!savedCourseId,
   });
-  const lessons = lessonsData?.data || lessonsData || [];
+  // getAdminLessons now returns the full course object; extract lessons from it
+  const lessons = lessonsData?.lessons || [];
 
   // ── Create / Update course ────────────────────────────────
   const courseMutation = useMutation({
@@ -148,11 +149,19 @@ export default function AdminCourseForm() {
       setLessonError('Tên bài giảng không được để trống.');
       return;
     }
+    if (!lessonForm.video_url.trim()) {
+      setLessonError('URL video không được để trống.');
+      return;
+    }
+    if (!lessonForm.order_index) {
+      setLessonError('Thứ tự bài giảng không được để trống.');
+      return;
+    }
     createLessonMutation.mutate({
       course_id: savedCourseId,
       title: lessonForm.title,
       video_url: lessonForm.video_url,
-      order_index: lessonForm.order_index ? Number(lessonForm.order_index) : undefined,
+      order_index: Number(lessonForm.order_index),
     });
   };
 
@@ -331,7 +340,7 @@ export default function AdminCourseForm() {
               />
               <input
                 type="url"
-                placeholder="Link video (URL)"
+                placeholder="Link video (URL) *"
                 value={lessonForm.video_url}
                 onChange={(e) => setLessonForm((p) => ({ ...p, video_url: e.target.value }))}
                 className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -339,7 +348,7 @@ export default function AdminCourseForm() {
               <input
                 type="number"
                 min="1"
-                placeholder="Thứ tự"
+                placeholder="Thứ tự *"
                 value={lessonForm.order_index}
                 onChange={(e) => setLessonForm((p) => ({ ...p, order_index: e.target.value }))}
                 className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"

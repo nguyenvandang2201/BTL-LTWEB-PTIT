@@ -221,10 +221,10 @@ export default function CourseDetail() {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm uppercase">
-                      {review.student?.full_name?.[0] || 'U'}
+                      {review.user?.full_name?.[0] || 'U'}
                     </div>
                     <span className="font-semibold text-gray-800 text-sm">
-                      {review.student?.full_name || 'Học viên ẩn danh'}
+                      {review.user?.full_name || 'Học viên ẩn danh'}
                     </span>
                   </div>
                   <StarRating rating={review.rating} />

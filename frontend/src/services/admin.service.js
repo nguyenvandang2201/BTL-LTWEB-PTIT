@@ -1,8 +1,9 @@
 import axiosInstance from '../utils/axiosInstance';
 
 // ── Categories ────────────────────────────────────────────────
+// GET uses the public endpoint (no admin GET route exists)
 export const getCategories = async () =>
-  axiosInstance.get('/admin/categories');
+  axiosInstance.get('/categories');
 
 export const createCategory = async (data) =>
   axiosInstance.post('/admin/categories', data);
@@ -14,8 +15,9 @@ export const deleteCategory = async (id) =>
   axiosInstance.delete(`/admin/categories/${id}`);
 
 // ── Courses ───────────────────────────────────────────────────
+// GET uses the public endpoint (no admin GET route exists)
 export const getAdminCourses = async () =>
-  axiosInstance.get('/admin/courses');
+  axiosInstance.get('/courses');
 
 export const createCourse = async (data) =>
   axiosInstance.post('/admin/courses', data);
@@ -27,8 +29,10 @@ export const deleteCourse = async (id) =>
   axiosInstance.delete(`/admin/courses/${id}`);
 
 // ── Lessons ───────────────────────────────────────────────────
+// Uses public course-detail endpoint (no admin GET lessons route exists)
+// Returns full course object; extract .lessons from the result
 export const getAdminLessons = async (courseId) =>
-  axiosInstance.get(`/admin/lessons?course_id=${courseId}`);
+  axiosInstance.get(`/courses/${courseId}`);
 
 export const createLesson = async (data) =>
   axiosInstance.post('/admin/lessons', data);

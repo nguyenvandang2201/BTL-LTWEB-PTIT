@@ -19,6 +19,7 @@ export default function MainLayout() {
             {auth ? (
               <>
                 <Link to="/my-courses" className="hover:text-blue-600 transition-colors">Khóa học của tôi</Link>
+                <Link to="/profile" className="hover:text-blue-600 transition-colors">Hồ sơ</Link>
                 <button
                   onClick={logout}
                   className="bg-red-500 text-white px-4 py-1.5 rounded-lg hover:bg-red-600 transition-colors"

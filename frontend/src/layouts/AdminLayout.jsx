@@ -6,12 +6,14 @@ import {
   Tag,
   Users,
   LogOut,
+  Video,
 } from 'lucide-react';
 
 const navItems = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/admin/categories', label: 'Quản lý Danh mục', icon: Tag },
   { to: '/admin/courses', label: 'Quản lý Khóa học', icon: BookOpen },
+  { to: '/admin/lessons', label: 'Quản lý Bài giảng', icon: Video },
   { to: '/admin/students', label: 'Quản lý Học viên', icon: Users },
 ];
 

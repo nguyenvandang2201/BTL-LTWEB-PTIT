@@ -240,9 +240,9 @@ export default function Learning() {
                 <div key={r.review_id} className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold uppercase">
-                      {r.student?.full_name?.[0] || 'U'}
+                      {r.user?.full_name?.[0] || 'U'}
                     </div>
-                    <span className="text-sm font-semibold text-gray-800">{r.student?.full_name || 'Ẩn danh'}</span>
+                    <span className="text-sm font-semibold text-gray-800">{r.user?.full_name || 'Ẩn danh'}</span>
                     <div className="flex gap-0.5 ml-auto">
                       {[1,2,3,4,5].map((s) => (
                         <Star key={s} size={12} className={s <= r.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 fill-gray-300'} />
