@@ -97,6 +97,7 @@ export default function CourseDetail() {
               src={course.image_url || 'https://placehold.co/800x450?text=No+Image'}
               alt={course.title}
               className="w-full h-full object-cover"
+              onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://placehold.co/800x450?text=No+Image'; }}
             />
           </div>
           <div>

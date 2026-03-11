@@ -55,6 +55,7 @@ export default function MyCourses() {
                     src={course.image_url || 'https://placehold.co/640x360?text=No+Image'}
                     alt={course.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://placehold.co/640x360?text=No+Image'; }}
                   />
                 </div>
                 <div className="p-4">
