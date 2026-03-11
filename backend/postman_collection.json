@@ -1,0 +1,348 @@
+{
+  "info": {
+    "name": "Khóa học trực tuyến - API Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000/api" },
+    { "key": "adminToken", "value": "" },
+    { "key": "studentToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Đăng ký tài khoản",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Người Dùng Mới\",\n  \"email\": \"newuser@test.com\",\n  \"password\": \"123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Đăng nhập Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "  pm.collectionVariables.set('adminToken', res.token);",
+                  "  console.log('Admin token saved!');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Đăng nhập Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "  pm.collectionVariables.set('studentToken', res.token);",
+                  "  console.log('Student token saved!');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@test.com\",\n  \"password\": \"123456\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Tạo danh mục",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/admin/categories",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Lập trình Mobile\",\n  \"description\": \"Các khóa học về Android, iOS, React Native\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Tạo khóa học",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/admin/courses",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Khoá học React Native cơ bản\",\n  \"price\": 699000,\n  \"category_id\": 1,\n  \"description\": \"Học lập trình di động với React Native từ đầu\",\n  \"image_url\": \"https://example.com/react-native.png\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Thêm bài giảng",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/admin/lessons",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"course_id\": 1,\n  \"title\": \"Bài 3: Middleware trong Express\",\n  \"video_url\": \"https://www.youtube.com/watch?v=lesson3\",\n  \"order_index\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "Sửa danh mục",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/admin/categories/1",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tên danh mục mới\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Xóa danh mục",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/admin/categories/1",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "Sửa khóa học",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/admin/courses/1",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 600000\n}"
+            }
+          }
+        },
+        {
+          "name": "Xóa khóa học",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/admin/courses/1",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "Sửa bài giảng",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/admin/lessons/1",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Tên bài giảng mới\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Xóa bài giảng",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/admin/lessons/1",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "Xem danh sách học viên",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/students",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "Xem chi tiết học viên",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/students/1",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "Xóa đánh giá",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/admin/reviews/1",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Public",
+      "item": [
+        {
+          "name": "Lấy danh sách danh mục",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/categories"
+          }
+        },
+        {
+          "name": "Lấy danh sách khóa học",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/courses"
+          }
+        },
+        {
+          "name": "Xem chi tiết khóa học",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/courses/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Student",
+      "item": [
+        {
+          "name": "Mua khóa học",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/student/enroll",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{studentToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"course_id\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Xem video bài học",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/student/lessons/1/video",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{studentToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "Đánh giá khóa học",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/student/reviews",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{studentToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"course_id\": 1,\n  \"rating\": 5,\n  \"comment\": \"Khóa học rất hay và dễ hiểu!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Xem khóa học đã mua",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/student/my-courses",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{studentToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "Cập nhật thông tin cá nhân",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/student/profile",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{studentToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Tên Mới Của Tôi\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Đổi mật khẩu",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/student/change-password",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{studentToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"old_password\": \"123456\",\n  \"new_password\": \"newpassword123\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

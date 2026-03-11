@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  user_id    Int          @id @default(autoincrement())
+  full_name  String
+  email      String       @unique
+  password   String
+  role       String       @default("student")
+  created_at DateTime     @default(now())
+  enrollments Enrollment[]
+  reviews    Review[]
+
+  @@map("users")
+}
+
+model Category {
+  category_id Int      @id @default(autoincrement())
+  name        String
+  description String?
+  courses     Course[]
+
+  @@map("categories")
+}
+
+model Course {
+  course_id   Int          @id @default(autoincrement())
+  category_id Int
+  title       String
+  description String?
+  price       Decimal
+  image_url   String?
+  created_at  DateTime     @default(now())
+  category    Category     @relation(fields: [category_id], references: [category_id])
+  lessons     Lesson[]
+  enrollments Enrollment[]
+  reviews     Review[]
+
+  @@map("courses")
+}
+
+model Lesson {
+  lesson_id   Int      @id @default(autoincrement())
+  course_id   Int
+  title       String
+  video_url   String
+  order_index Int
+  created_at  DateTime @default(now())
+  course      Course   @relation(fields: [course_id], references: [course_id], onDelete: Cascade)
+
+  @@map("lessons")
+}
+
+model Enrollment {
+  enrollment_id Int      @id @default(autoincrement())
+  user_id       Int
+  course_id     Int
+  is_paid       Boolean  @default(false)
+  created_at    DateTime @default(now())
+  user          User     @relation(fields: [user_id], references: [user_id])
+  course        Course   @relation(fields: [course_id], references: [course_id])
+
+  @@map("enrollments")
+}
+
+model Review {
+  review_id  Int      @id @default(autoincrement())
+  user_id    Int
+  course_id  Int
+  rating     Int
+  comment    String?
+  created_at DateTime @default(now())
+  user       User     @relation(fields: [user_id], references: [user_id])
+  course     Course   @relation(fields: [course_id], references: [course_id])
+
+  @@map("reviews")
+}
