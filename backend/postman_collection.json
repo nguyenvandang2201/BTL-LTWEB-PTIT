@@ -1,346 +1,834 @@
 {
   "info": {
     "name": "Khóa học trực tuyến - API Collection",
+    "description": "API Collection cho hệ thống khóa học trực tuyến. Base URL: http://localhost:5000/api\n\n**Hướng dẫn sử dụng:**\n1. Chạy request \"Đăng nhập Admin\" để tự động lưu `adminToken`.\n2. Chạy request \"Đăng nhập Student\" để tự động lưu `studentToken`.\n3. Các request có 🔒 yêu cầu token tương ứng trong header Authorization.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:5000/api" },
-    { "key": "adminToken", "value": "" },
-    { "key": "studentToken", "value": "" }
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "studentToken",
+      "value": "",
+      "type": "string"
+    }
   ],
   "item": [
     {
-      "name": "Auth",
+      "name": "🔐 Auth",
+      "description": "Các API xác thực: đăng ký và đăng nhập tài khoản.",
       "item": [
         {
           "name": "Đăng ký tài khoản",
           "request": {
             "method": "POST",
-            "url": "{{baseUrl}}/auth/register",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
             "body": {
               "mode": "raw",
+              "options": { "raw": { "language": "json" } },
               "raw": "{\n  \"full_name\": \"Người Dùng Mới\",\n  \"email\": \"newuser@test.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "description": "Tạo tài khoản học viên mới.\n\n**Body (bắt buộc):**\n- `full_name` (string, min 1 ký tự)\n- `email` (string, email hợp lệ)\n- `password` (string, min 6 ký tự)\n\n**Response 201:** Đăng ký thành công."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});"
+                ]
+              }
             }
-          }
+          ]
         },
         {
           "name": "Đăng nhập Admin",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "description": "Đăng nhập tài khoản Admin. Token được tự động lưu vào biến `adminToken`.\n\n**Response 200:** `{ token, user: { user_id, full_name, email, role } }`"
+          },
           "event": [
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
                   "const res = pm.response.json();",
                   "if (res.token) {",
                   "  pm.collectionVariables.set('adminToken', res.token);",
-                  "  console.log('Admin token saved!');",
+                  "  console.log('✅ Admin token saved:', res.token);",
+                  "} else {",
+                  "  console.error('❌ Token not found in response');",
                   "}"
                 ]
               }
             }
-          ],
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/auth/login",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"123456\"\n}"
-            }
-          }
+          ]
         },
         {
           "name": "Đăng nhập Student",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"email\": \"student@test.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "description": "Đăng nhập tài khoản Student. Token được tự động lưu vào biến `studentToken`.\n\n**Response 200:** `{ token, user: { user_id, full_name, email, role } }`"
+          },
           "event": [
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
                   "const res = pm.response.json();",
                   "if (res.token) {",
                   "  pm.collectionVariables.set('studentToken', res.token);",
-                  "  console.log('Student token saved!');",
+                  "  console.log('✅ Student token saved:', res.token);",
+                  "} else {",
+                  "  console.error('❌ Token not found in response');",
                   "}"
                 ]
               }
             }
-          ],
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/auth/login",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"student@test.com\",\n  \"password\": \"123456\"\n}"
-            }
-          }
+          ]
         }
       ]
     },
     {
-      "name": "Admin",
-      "item": [
-        {
-          "name": "Tạo danh mục",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/admin/categories",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Lập trình Mobile\",\n  \"description\": \"Các khóa học về Android, iOS, React Native\"\n}"
-            }
-          }
-        },
-        {
-          "name": "Tạo khóa học",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/admin/courses",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"Khoá học React Native cơ bản\",\n  \"price\": 699000,\n  \"category_id\": 1,\n  \"description\": \"Học lập trình di động với React Native từ đầu\",\n  \"image_url\": \"https://example.com/react-native.png\"\n}"
-            }
-          }
-        },
-        {
-          "name": "Thêm bài giảng",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/admin/lessons",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"course_id\": 1,\n  \"title\": \"Bài 3: Middleware trong Express\",\n  \"video_url\": \"https://www.youtube.com/watch?v=lesson3\",\n  \"order_index\": 3\n}"
-            }
-          }
-        },
-        {
-          "name": "Sửa danh mục",
-          "request": {
-            "method": "PUT",
-            "url": "{{baseUrl}}/admin/categories/1",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Tên danh mục mới\"\n}"
-            }
-          }
-        },
-        {
-          "name": "Xóa danh mục",
-          "request": {
-            "method": "DELETE",
-            "url": "{{baseUrl}}/admin/categories/1",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ]
-          }
-        },
-        {
-          "name": "Sửa khóa học",
-          "request": {
-            "method": "PUT",
-            "url": "{{baseUrl}}/admin/courses/1",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"price\": 600000\n}"
-            }
-          }
-        },
-        {
-          "name": "Xóa khóa học",
-          "request": {
-            "method": "DELETE",
-            "url": "{{baseUrl}}/admin/courses/1",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ]
-          }
-        },
-        {
-          "name": "Sửa bài giảng",
-          "request": {
-            "method": "PUT",
-            "url": "{{baseUrl}}/admin/lessons/1",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"Tên bài giảng mới\"\n}"
-            }
-          }
-        },
-        {
-          "name": "Xóa bài giảng",
-          "request": {
-            "method": "DELETE",
-            "url": "{{baseUrl}}/admin/lessons/1",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ]
-          }
-        },
-        {
-          "name": "Xem danh sách học viên",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/admin/students",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ]
-          }
-        },
-        {
-          "name": "Xem chi tiết học viên",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/admin/students/1",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ]
-          }
-        },
-        {
-          "name": "Xóa đánh giá",
-          "request": {
-            "method": "DELETE",
-            "url": "{{baseUrl}}/admin/reviews/1",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Public",
+      "name": "🌐 Public",
+      "description": "Các API công khai, không yêu cầu xác thực.",
       "item": [
         {
           "name": "Lấy danh sách danh mục",
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/categories"
-          }
+            "url": {
+              "raw": "{{baseUrl}}/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories"]
+            },
+            "description": "Trả về toàn bộ danh mục khóa học.\n\n**Response 200:** `[ { category_id, name, description } ]`"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is an array', function () {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Lấy danh sách khóa học",
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/courses"
-          }
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["courses"]
+            },
+            "description": "Trả về toàn bộ khóa học, bao gồm tên danh mục, sắp xếp theo ngày tạo mới nhất.\n\n**Response 200:** `[ { course_id, title, price, description, image_url, category: { name } } ]`"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is an array', function () {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Xem chi tiết khóa học",
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/courses/1"
-          }
+            "url": {
+              "raw": "{{baseUrl}}/courses/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["courses", "1"]
+            },
+            "description": "Trả về thông tin chi tiết khóa học gồm danh mục, danh sách bài giảng (bị khóa với người chưa mua) và đánh giá.\n\n**Path param:** `id` – ID khóa học.\n\n**Response 200:** `{ course_id, title, price, category, lessons: [{ lesson_id, title, order_index, is_locked }], reviews }`\n**Response 404:** Không tìm thấy khóa học."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 404', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
     {
-      "name": "Student",
+      "name": "🔒 Admin",
+      "description": "Các API quản trị. Yêu cầu đăng nhập Admin và header `Authorization: Bearer {{adminToken}}`.",
       "item": [
         {
-          "name": "Mua khóa học",
+          "name": "Danh mục",
+          "item": [
+            {
+              "name": "Tạo danh mục",
+              "request": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/admin/categories",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "categories"]
+                },
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "options": { "raw": { "language": "json" } },
+                  "raw": "{\n  \"name\": \"Lập trình Mobile\",\n  \"description\": \"Các khóa học về Android, iOS, React Native\"\n}"
+                },
+                "description": "Tạo danh mục mới.\n\n**Body:**\n- `name` (string, bắt buộc, min 1 ký tự, phải duy nhất)\n- `description` (string, tùy chọn)\n\n**Response 201:** `{ message }` | **400:** Tên đã tồn tại."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "  pm.response.to.have.status(201);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Sửa danh mục",
+              "request": {
+                "method": "PUT",
+                "url": {
+                  "raw": "{{baseUrl}}/admin/categories/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "categories", "1"]
+                },
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "options": { "raw": { "language": "json" } },
+                  "raw": "{\n  \"name\": \"Tên danh mục đã sửa\",\n  \"description\": \"Mô tả mới\"\n}"
+                },
+                "description": "Cập nhật thông tin danh mục theo ID.\n\n**Path param:** `id` – ID danh mục.\n**Body (tất cả tùy chọn):** `name`, `description`.\n\n**Response 200:** `{ message }`"
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Xóa danh mục",
+              "request": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{baseUrl}}/admin/categories/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "categories", "1"]
+                },
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+                ],
+                "description": "Xóa danh mục theo ID. Không thể xóa nếu danh mục đang chứa khóa học.\n\n**Path param:** `id` – ID danh mục.\n\n**Response 200:** `{ message }` | **400:** Danh mục đang có khóa học | **404:** Không tìm thấy."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200 or 400 or 404', function () {",
+                      "  pm.expect(pm.response.code).to.be.oneOf([200, 400, 404]);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Khóa học",
+          "item": [
+            {
+              "name": "Tạo khóa học",
+              "request": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/admin/courses",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "courses"]
+                },
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "options": { "raw": { "language": "json" } },
+                  "raw": "{\n  \"title\": \"Khóa học React Native cơ bản\",\n  \"price\": 699000,\n  \"category_id\": 1,\n  \"description\": \"Học lập trình di động với React Native từ đầu\",\n  \"image_url\": \"https://example.com/react-native.png\"\n}"
+                },
+                "description": "Tạo khóa học mới.\n\n**Body:**\n- `title` (string, bắt buộc)\n- `price` (number, bắt buộc, > 0)\n- `category_id` (integer, bắt buộc)\n- `description` (string, tùy chọn)\n- `image_url` (string, tùy chọn)\n\n**Response 201:** `{ message, course_id }`"
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "  pm.response.to.have.status(201);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Sửa khóa học",
+              "request": {
+                "method": "PUT",
+                "url": {
+                  "raw": "{{baseUrl}}/admin/courses/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "courses", "1"]
+                },
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "options": { "raw": { "language": "json" } },
+                  "raw": "{\n  \"title\": \"Tên khóa học mới\",\n  \"price\": 599000,\n  \"description\": \"Mô tả mới\",\n  \"image_url\": \"https://example.com/new-image.png\",\n  \"category_id\": 1\n}"
+                },
+                "description": "Cập nhật thông tin khóa học theo ID.\n\n**Path param:** `id` – ID khóa học.\n**Body (tất cả tùy chọn):** `title`, `price`, `category_id`, `description`, `image_url`.\n\n**Response 200:** `{ message }`"
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Xóa khóa học",
+              "request": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{baseUrl}}/admin/courses/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "courses", "1"]
+                },
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+                ],
+                "description": "Xóa khóa học theo ID.\n\n**Path param:** `id` – ID khóa học.\n\n**Response 200:** `{ message }`"
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bài giảng",
+          "item": [
+            {
+              "name": "Thêm bài giảng",
+              "request": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/admin/lessons",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "lessons"]
+                },
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "options": { "raw": { "language": "json" } },
+                  "raw": "{\n  \"course_id\": 1,\n  \"title\": \"Bài 1: Giới thiệu khóa học\",\n  \"video_url\": \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\",\n  \"order_index\": 1\n}"
+                },
+                "description": "Thêm bài giảng mới vào khóa học.\n\n**Body:**\n- `course_id` (integer, bắt buộc)\n- `title` (string, bắt buộc)\n- `video_url` (string URL hợp lệ, bắt buộc)\n- `order_index` (integer, bắt buộc)\n\n**Response 201:** `{ message, lesson }`"
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "  pm.response.to.have.status(201);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Sửa bài giảng",
+              "request": {
+                "method": "PUT",
+                "url": {
+                  "raw": "{{baseUrl}}/admin/lessons/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "lessons", "1"]
+                },
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "options": { "raw": { "language": "json" } },
+                  "raw": "{\n  \"title\": \"Tên bài giảng mới\",\n  \"video_url\": \"https://www.youtube.com/watch?v=updated\",\n  \"order_index\": 2\n}"
+                },
+                "description": "Cập nhật thông tin bài giảng theo ID.\n\n**Path param:** `id` – ID bài giảng.\n**Body (tất cả tùy chọn):** `title`, `video_url`, `order_index`.\n\n**Response 200:** `{ message }`"
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Xóa bài giảng",
+              "request": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{baseUrl}}/admin/lessons/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "lessons", "1"]
+                },
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+                ],
+                "description": "Xóa bài giảng theo ID.\n\n**Path param:** `id` – ID bài giảng.\n\n**Response 200:** `{ message }`"
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Học viên",
+          "item": [
+            {
+              "name": "Xem danh sách học viên",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/admin/students",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "students"]
+                },
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+                ],
+                "description": "Lấy danh sách tất cả học viên (role = student).\n\n**Response 200:** `[ { user_id, full_name, email, created_at } ]`"
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});",
+                      "pm.test('Response is an array', function () {",
+                      "  pm.expect(pm.response.json()).to.be.an('array');",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Xem chi tiết học viên",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/admin/students/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "students", "1"]
+                },
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+                ],
+                "description": "Lấy thông tin chi tiết của một học viên, bao gồm các khóa học đã đăng ký.\n\n**Path param:** `id` – ID học viên.\n\n**Response 200:** `{ user_id, full_name, email, role, created_at, enrollments: [{ course }] }` | **404:** Không tìm thấy."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200 or 404', function () {",
+                      "  pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Đánh giá",
+          "item": [
+            {
+              "name": "Xóa đánh giá",
+              "request": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{baseUrl}}/admin/reviews/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "reviews", "1"]
+                },
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+                ],
+                "description": "Xóa một đánh giá theo ID (Admin có thể xóa bất kỳ đánh giá nào).\n\n**Path param:** `id` – ID đánh giá.\n\n**Response 200:** `{ message }`"
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🎓 Student",
+      "description": "Các API dành cho học viên. Yêu cầu đăng nhập và header `Authorization: Bearer {{studentToken}}`.",
+      "item": [
+        {
+          "name": "Mua khóa học (Enroll)",
           "request": {
             "method": "POST",
-            "url": "{{baseUrl}}/student/enroll",
+            "url": {
+              "raw": "{{baseUrl}}/student/enroll",
+              "host": ["{{baseUrl}}"],
+              "path": ["student", "enroll"]
+            },
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{studentToken}}" }
             ],
             "body": {
               "mode": "raw",
+              "options": { "raw": { "language": "json" } },
               "raw": "{\n  \"course_id\": 1\n}"
+            },
+            "description": "Đăng ký mua một khóa học. Mỗi khóa học chỉ mua được một lần.\n\n**Body:**\n- `course_id` (integer, bắt buộc, > 0)\n\n**Response 201:** `{ message }` | **400:** Đã mua khóa học này rồi."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201 or 400', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
+                  "});"
+                ]
+              }
             }
-          }
-        },
-        {
-          "name": "Xem video bài học",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/student/lessons/1/video",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{studentToken}}" }
-            ]
-          }
-        },
-        {
-          "name": "Đánh giá khóa học",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/student/reviews",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{studentToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"course_id\": 1,\n  \"rating\": 5,\n  \"comment\": \"Khóa học rất hay và dễ hiểu!\"\n}"
-            }
-          }
+          ]
         },
         {
           "name": "Xem khóa học đã mua",
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/student/my-courses",
+            "url": {
+              "raw": "{{baseUrl}}/student/my-courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["student", "my-courses"]
+            },
             "header": [
               { "key": "Authorization", "value": "Bearer {{studentToken}}" }
-            ]
-          }
+            ],
+            "description": "Lấy danh sách các khóa học mà học viên đã đăng ký.\n\n**Response 200:** `[ { enrollment_id, enrolled_at, course: { course_id, title, price, ... } } ]`"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Xem video bài giảng",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/student/lessons/1/video",
+              "host": ["{{baseUrl}}"],
+              "path": ["student", "lessons", "1", "video"]
+            },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{studentToken}}" }
+            ],
+            "description": "Lấy URL video của bài giảng. Chỉ cho phép nếu học viên đã mua khóa học chứa bài giảng đó.\n\n**Path param:** `id` – ID bài giảng.\n\n**Response 200:** `{ video_url }` | **403:** Chưa mua khóa học | **404:** Không tìm thấy bài giảng."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 403 or 404', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 403, 404]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Đánh giá khóa học",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/student/reviews",
+              "host": ["{{baseUrl}}"],
+              "path": ["student", "reviews"]
+            },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{studentToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"course_id\": 1,\n  \"rating\": 5,\n  \"comment\": \"Khóa học rất hay và dễ hiểu!\"\n}"
+            },
+            "description": "Gửi đánh giá cho khóa học đã mua.\n\n**Body:**\n- `course_id` (integer, bắt buộc, > 0)\n- `rating` (integer, 1–5, bắt buộc)\n- `comment` (string, bắt buộc, min 1 ký tự)\n\n**Response 201:** `{ message }` | **400:** Chưa mua khóa học hoặc đã đánh giá."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201 or 400', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Cập nhật thông tin cá nhân",
           "request": {
             "method": "PUT",
-            "url": "{{baseUrl}}/student/profile",
+            "url": {
+              "raw": "{{baseUrl}}/student/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["student", "profile"]
+            },
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{studentToken}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"full_name\": \"Tên Mới Của Tôi\"\n}"
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"full_name\": \"Nguyễn Văn A\"\n}"
+            },
+            "description": "Cập nhật họ tên của học viên đang đăng nhập.\n\n**Body:**\n- `full_name` (string, bắt buộc, min 1 ký tự)\n\n**Response 200:** `{ message }`"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
             }
-          }
+          ]
         },
         {
           "name": "Đổi mật khẩu",
           "request": {
             "method": "PUT",
-            "url": "{{baseUrl}}/student/change-password",
+            "url": {
+              "raw": "{{baseUrl}}/student/change-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["student", "change-password"]
+            },
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{studentToken}}" }
             ],
             "body": {
               "mode": "raw",
+              "options": { "raw": { "language": "json" } },
               "raw": "{\n  \"old_password\": \"123456\",\n  \"new_password\": \"newpassword123\"\n}"
+            },
+            "description": "Đổi mật khẩu cho tài khoản đang đăng nhập.\n\n**Body:**\n- `old_password` (string, bắt buộc, min 6 ký tự)\n- `new_password` (string, bắt buộc, min 6 ký tự)\n\n**Response 200:** `{ message }` | **400:** Mật khẩu cũ không đúng."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 400', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 400]);",
+                  "});"
+                ]
+              }
             }
-          }
+          ]
         }
       ]
     }
