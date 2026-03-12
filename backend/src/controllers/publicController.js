@@ -36,6 +36,7 @@ export const getCourseDetail = async (req, res) => {
             lesson_id: true,
             title: true,
             order_index: true,
+            video_url: true,
           },
           orderBy: { order_index: 'asc' },
         },
@@ -53,7 +54,13 @@ export const getCourseDetail = async (req, res) => {
 
     const courseWithLockedLessons = {
       ...course,
-      lessons: course.lessons.map((lesson) => ({ ...lesson, is_locked: true })),
+      lessons: course.lessons.map((lesson, index) => {
+        if (index < 2) {
+          return { ...lesson, is_locked: false };
+        }
+        const { video_url, ...rest } = lesson;
+        return { ...rest, is_locked: true };
+      }),
     };
 
     return res.status(200).json(courseWithLockedLessons);

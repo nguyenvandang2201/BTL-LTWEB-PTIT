@@ -35,11 +35,22 @@ export const getLessonVideo = async (req, res) => {
       return res.status(404).json({ message: 'Không tìm thấy bài học' });
     }
 
-    const enrollment = await prisma.enrollment.findFirst({
-      where: { user_id, course_id: lesson.course_id },
+    // Check if this lesson is among the first 2 in its course (free preview)
+    const firstTwoLessons = await prisma.lesson.findMany({
+      where: { course_id: lesson.course_id },
+      orderBy: { order_index: 'asc' },
+      take: 2,
+      select: { lesson_id: true },
     });
-    if (!enrollment || !enrollment.is_paid) {
-      return res.status(403).json({ message: 'Vui lòng mua khóa học để xem' });
+    const isFreeLesson = firstTwoLessons.some((l) => l.lesson_id === lesson.lesson_id);
+
+    if (!isFreeLesson) {
+      const enrollment = await prisma.enrollment.findFirst({
+        where: { user_id, course_id: lesson.course_id },
+      });
+      if (!enrollment || !enrollment.is_paid) {
+        return res.status(403).json({ message: 'Vui lòng mua khóa học để xem' });
+      }
     }
 
     return res.status(200).json(lesson);

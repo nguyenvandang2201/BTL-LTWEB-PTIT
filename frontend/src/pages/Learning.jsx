@@ -135,6 +135,15 @@ export default function Learning() {
 
   const handleLessonClick = (lesson) => {
     if (loadingLesson) return;
+    // Free preview lesson: use video_url from course detail directly
+    if (!lesson.is_locked && lesson.video_url) {
+      const url = resolveVideoUrl(lesson.video_url);
+      if (url) {
+        setCurrentVideoUrl(url);
+        setActiveLesson(lesson.lesson_id);
+      }
+      return;
+    }
     videoMutation.mutate(lesson.lesson_id);
   };
 

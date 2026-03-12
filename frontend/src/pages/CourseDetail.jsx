@@ -1,6 +1,6 @@
 ﻿import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Lock, Star, BookOpen, User, ShoppingCart, Trash2 } from 'lucide-react';
+import { Lock, Star, BookOpen, User, ShoppingCart, Trash2, PlayCircle } from 'lucide-react';
 import { getCourseDetail } from '../services/public.service';
 import { enrollCourse } from '../services/student.service';
 import { deleteReview } from '../services/admin.service';
@@ -209,10 +209,17 @@ export default function CourseDetail() {
                   </span>
                   <span className="text-zinc-200 text-sm font-medium">{lesson.title}</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-zinc-500 text-xs shrink-0">
-                  <Lock size={14} />
-                  <span>Đã khóa</span>
-                </div>
+                {lesson.is_locked ? (
+                  <div className="flex items-center gap-1.5 text-zinc-500 text-xs shrink-0">
+                    <Lock size={14} />
+                    <span>Đã khóa</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 text-green-500 text-xs shrink-0">
+                    <PlayCircle size={14} />
+                    <span>Xem thử</span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
