@@ -1,6 +1,7 @@
 ﻿import { useQuery } from '@tanstack/react-query';
 import { BookOpen, Users, Tag, TrendingUp } from 'lucide-react';
 import { getAdminCourses, getCategories, getStudents } from '../services/admin.service';
+import { resolveImageUrl } from '../utils';
 
 function formatPrice(price) {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
@@ -73,13 +74,12 @@ export default function AdminDashboard() {
           <ul className="divide-y divide-zinc-800">
             {courses.slice(0, 5).map((course) => (
               <li key={course.course_id} className="py-3.5 flex items-center gap-3">
-                {course.image_url && (
-                  <img
-                    src={course.image_url}
-                    alt={course.title}
-                    className="w-10 h-10 rounded-lg object-cover border border-zinc-700 shrink-0"
-                  />
-                )}
+                <img
+                  src={resolveImageUrl(course.image_url) || 'https://placehold.co/40x40?text=IMG'}
+                  alt={course.title}
+                  className="w-10 h-10 rounded-lg object-cover border border-zinc-700 shrink-0"
+                  onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://placehold.co/40x40?text=IMG'; }}
+                />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-zinc-200 truncate">{course.title}</p>
                   <p className="text-xs text-zinc-500 mt-0.5">

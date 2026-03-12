@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Trash2, PlusCircle, Loader2 } from 'lucide-react';
-import { getCategories } from '../../services/admin.service';
-import { createCategory, deleteCategory } from '../../services/admin.service';
+import { Trash2, PlusCircle, Loader2, Pencil, Check, X } from 'lucide-react';
+import { getCategories, createCategory, deleteCategory, updateCategory } from '../../services/admin.service';
 
 const QUERY_KEY = ['admin', 'categories'];
 
@@ -12,6 +11,10 @@ export default function AdminCategories() {
   const [form, setForm] = useState({ name: '', description: '' });
   const [formError, setFormError] = useState('');
   const [actionError, setActionError] = useState('');
+
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({ name: '', description: '' });
+  const [editError, setEditError] = useState('');
 
   // ── Fetch ─────────────────────────────────────────────────
   const { data, isLoading, isError } = useQuery({
@@ -50,6 +53,21 @@ export default function AdminCategories() {
     },
   });
 
+  // ── Update ────────────────────────────────────────────────
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }) => updateCategory(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      setEditingId(null);
+      setEditError('');
+    },
+    onError: (err) => {
+      setEditError(
+        err?.response?.data?.message || err?.message || 'Không thể cập nhật danh mục.'
+      );
+    },
+  });
+
   const handleCreate = (e) => {
     e.preventDefault();
     if (!form.name.trim()) {
@@ -64,6 +82,25 @@ export default function AdminCategories() {
     setActionError('');
     if (!window.confirm(`Bạn có chắc chắn muốn xóa danh mục "${category.name}"?`)) return;
     deleteMutation.mutate(category.category_id);
+  };
+
+  const handleEditStart = (cat) => {
+    setEditingId(cat.category_id);
+    setEditForm({ name: cat.name, description: cat.description || '' });
+    setEditError('');
+  };
+
+  const handleEditCancel = () => {
+    setEditingId(null);
+    setEditError('');
+  };
+
+  const handleEditSave = (id) => {
+    if (!editForm.name.trim()) {
+      setEditError('Tên danh mục không được để trống.');
+      return;
+    }
+    updateMutation.mutate({ id, data: editForm });
   };
 
   return (
@@ -157,20 +194,81 @@ export default function AdminCategories() {
                       <td className="px-5 py-4 text-zinc-500 font-mono text-xs">
                         #{cat.category_id}
                       </td>
-                      <td className="px-5 py-4 font-medium text-zinc-200">{cat.name}</td>
-                      <td className="px-5 py-4 text-zinc-400 hidden md:table-cell">
-                        {cat.description || <span className="italic text-zinc-600">Không có</span>}
-                      </td>
-                      <td className="px-5 py-4 text-right">
-                        <button
-                          onClick={() => handleDelete(cat)}
-                          disabled={deleteMutation.isPending}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-400 bg-red-950/30 hover:bg-red-950/60 border border-red-900/60 rounded-lg transition-colors disabled:opacity-50"
-                        >
-                          <Trash2 size={13} />
-                          Xóa
-                        </button>
-                      </td>
+                      {editingId === cat.category_id ? (
+                        <>
+                          <td className="px-5 py-3">
+                            <input
+                              type="text"
+                              value={editForm.name}
+                              onChange={(e) => setEditForm((p) => ({ ...p, name: e.target.value }))}
+                              className="w-full px-3 py-1.5 border border-zinc-600 bg-zinc-800 text-zinc-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
+                            />
+                            {editError && (
+                              <p className="text-red-500 text-xs mt-1">{editError}</p>
+                            )}
+                          </td>
+                          <td className="px-5 py-3 hidden md:table-cell">
+                            <input
+                              type="text"
+                              value={editForm.description}
+                              onChange={(e) => setEditForm((p) => ({ ...p, description: e.target.value }))}
+                              placeholder="Mô tả (tuỳ chọn)"
+                              className="w-full px-3 py-1.5 border border-zinc-600 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
+                            />
+                          </td>
+                          <td className="px-5 py-3 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => handleEditSave(cat.category_id)}
+                                disabled={updateMutation.isPending}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-green-400 bg-green-950/30 hover:bg-green-950/60 border border-green-900/60 rounded-lg transition-colors disabled:opacity-50"
+                              >
+                                {updateMutation.isPending ? (
+                                  <Loader2 size={13} className="animate-spin" />
+                                ) : (
+                                  <Check size={13} />
+                                )}
+                                Lưu
+                              </button>
+                              <button
+                                onClick={handleEditCancel}
+                                disabled={updateMutation.isPending}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-400 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-colors disabled:opacity-50"
+                              >
+                                <X size={13} />
+                                Hủy
+                              </button>
+                            </div>
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td className="px-5 py-4 font-medium text-zinc-200">{cat.name}</td>
+                          <td className="px-5 py-4 text-zinc-400 hidden md:table-cell">
+                            {cat.description || <span className="italic text-zinc-600">Không có</span>}
+                          </td>
+                          <td className="px-5 py-4 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => handleEditStart(cat)}
+                                disabled={deleteMutation.isPending}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-400 bg-blue-950/30 hover:bg-blue-950/60 border border-blue-900/60 rounded-lg transition-colors disabled:opacity-50"
+                              >
+                                <Pencil size={13} />
+                                Sửa
+                              </button>
+                              <button
+                                onClick={() => handleDelete(cat)}
+                                disabled={deleteMutation.isPending}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-400 bg-red-950/30 hover:bg-red-950/60 border border-red-900/60 rounded-lg transition-colors disabled:opacity-50"
+                              >
+                                <Trash2 size={13} />
+                                Xóa
+                              </button>
+                            </div>
+                          </td>
+                        </>
+                      )}
                     </tr>
                   ))
                 )}

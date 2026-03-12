@@ -1,10 +1,12 @@
 ﻿import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { Lock, Star, BookOpen, User, ShoppingCart } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Lock, Star, BookOpen, User, ShoppingCart, Trash2 } from 'lucide-react';
 import { getCourseDetail } from '../services/public.service';
 import { enrollCourse } from '../services/student.service';
+import { deleteReview } from '../services/admin.service';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
+import { resolveImageUrl } from '../utils';
 
 function formatPrice(price) {
   if (!price || price === 0) return 'Miễn phí';
@@ -29,6 +31,8 @@ export default function CourseDetail() {
   const { id } = useParams();
   const { auth } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const isAdmin = auth?.user?.role === 'admin';
   const [enrollMsg, setEnrollMsg] = useState('');
   const [enrollError, setEnrollError] = useState('');
 
@@ -45,6 +49,16 @@ export default function CourseDetail() {
         err?.message ||
         'Đã xảy ra lỗi khi đăng ký khóa học.';
       setEnrollError(msg);
+    },
+  });
+
+  const deleteReviewMutation = useMutation({
+    mutationFn: (reviewId) => deleteReview(reviewId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['course', id] });
+    },
+    onError: (err) => {
+      alert(err?.response?.data?.message || 'Không thể xóa đánh giá.');
     },
   });
 
@@ -94,7 +108,7 @@ export default function CourseDetail() {
         <div className="lg:col-span-2 space-y-5">
           <div className="rounded-xl overflow-hidden aspect-video bg-zinc-800">
             <img
-              src={course.image_url || 'https://placehold.co/800x450?text=No+Image'}
+              src={resolveImageUrl(course.image_url) || 'https://placehold.co/800x450?text=No+Image'}
               alt={course.title}
               className="w-full h-full object-cover"
               onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://placehold.co/800x450?text=No+Image'; }}
@@ -228,7 +242,23 @@ export default function CourseDetail() {
                       {review.user?.full_name || 'Học viên ẩn danh'}
                     </span>
                   </div>
-                  <StarRating rating={review.rating} />
+                  <div className="flex items-center gap-3">
+                    <StarRating rating={review.rating} />
+                    {isAdmin && (
+                      <button
+                        onClick={() => {
+                          if (!window.confirm('Bạn có chắc muốn xóa đánh giá này?')) return;
+                          deleteReviewMutation.mutate(review.review_id);
+                        }}
+                        disabled={deleteReviewMutation.isPending}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-red-400 bg-red-950/30 hover:bg-red-950/60 border border-red-900/60 rounded-lg transition-colors disabled:opacity-50"
+                        title="Xóa đánh giá (Admin)"
+                      >
+                        <Trash2 size={12} />
+                        Xóa
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <p className="text-zinc-300 text-sm leading-relaxed pl-11">
                   {review.comment}

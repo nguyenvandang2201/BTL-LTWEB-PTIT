@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom';
 import { BookOpen, PlayCircle } from 'lucide-react';
 import { getMyCourses } from '../services/student.service';
+import { resolveImageUrl } from '../utils';
 
 export default function MyCourses() {
   const { data, isLoading, isError } = useQuery({
@@ -52,7 +53,7 @@ export default function MyCourses() {
               >
                 <div className="aspect-video bg-zinc-800 overflow-hidden">
                   <img
-                    src={course.image_url || 'https://placehold.co/640x360?text=No+Image'}
+                    src={resolveImageUrl(course.image_url) || 'https://placehold.co/640x360?text=No+Image'}
                     alt={course.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://placehold.co/640x360?text=No+Image'; }}

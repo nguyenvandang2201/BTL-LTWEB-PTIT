@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircle, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { getAdminCourses, deleteCourse } from '../../services/admin.service';
+import { resolveImageUrl } from '../../utils';
 
 const QUERY_KEY = ['admin', 'courses'];
 
@@ -92,9 +93,10 @@ export default function AdminCourses() {
                         <div className="flex items-center gap-3">
                           {course.image_url && (
                             <img
-                              src={course.image_url}
+                              src={resolveImageUrl(course.image_url)}
                               alt={course.title}
                               className="w-10 h-10 rounded-lg object-cover border border-zinc-700 shrink-0 hidden sm:block"
+                              onError={(e) => { e.currentTarget.style.display = 'none'; }}
                             />
                           )}
                           <span className="font-medium text-zinc-200 line-clamp-2">

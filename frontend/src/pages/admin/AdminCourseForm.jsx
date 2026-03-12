@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { PlusCircle, Trash2, Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { PlusCircle, Trash2, Loader2, ArrowLeft, CheckCircle2, Pencil, Check, X } from 'lucide-react';
+import { resolveImageUrl, resolveVideoUrl } from '../../utils';
 import {
   getCategories,
   createCourse,
   updateCourse,
   getAdminCourses,
   createLesson,
+  updateLesson,
   deleteLesson,
   getAdminLessons,
 } from '../../services/admin.service';
@@ -45,6 +47,10 @@ export default function AdminCourseForm() {
   // ── Lesson form state ─────────────────────────────────────
   const [lessonForm, setLessonForm] = useState({ title: '', video_url: '', order_index: '' });
   const [lessonError, setLessonError] = useState('');
+
+  const [editingLessonId, setEditingLessonId] = useState(null);
+  const [editLessonForm, setEditLessonForm] = useState({ title: '', video_url: '', order_index: '' });
+  const [editLessonError, setEditLessonError] = useState('');
 
   // ── Fetch categories ──────────────────────────────────────
   const { data: catData } = useQuery({
@@ -114,7 +120,10 @@ export default function AdminCourseForm() {
     },
     onError: (err) => {
       setLessonError(
-        err?.response?.data?.message || err?.message || 'Không thể thêm bài giảng.'
+        err?.response?.data?.errors?.[0]?.message ||
+        err?.response?.data?.message ||
+        err?.message ||
+        'Không thể thêm bài giảng.'
       );
     },
   });
@@ -127,7 +136,23 @@ export default function AdminCourseForm() {
       alert(err?.response?.data?.message || 'Không thể xóa bài giảng.');
     },
   });
-
+  // ── Update lesson ─────────────────────────────────────────────
+  const updateLessonMutation = useMutation({
+    mutationFn: ({ id, data }) => updateLesson(id, data),
+    onSuccess: () => {
+      refetchLessons();
+      setEditingLessonId(null);
+      setEditLessonError('');
+    },
+    onError: (err) => {
+      setEditLessonError(
+        err?.response?.data?.errors?.[0]?.message ||
+        err?.response?.data?.message ||
+        err?.message ||
+        'Không thể cập nhật bài giảng.'
+      );
+    },
+  });
   // ── Handlers ──────────────────────────────────────────────
   const handleCourseSubmit = (e) => {
     e.preventDefault();
@@ -160,7 +185,7 @@ export default function AdminCourseForm() {
     createLessonMutation.mutate({
       course_id: savedCourseId,
       title: lessonForm.title,
-      video_url: lessonForm.video_url,
+      video_url: resolveVideoUrl(lessonForm.video_url),
       order_index: Number(lessonForm.order_index),
     });
   };
@@ -168,6 +193,36 @@ export default function AdminCourseForm() {
   const handleDeleteLesson = (lesson) => {
     if (!window.confirm(`Xóa bài giảng "${lesson.title}"?`)) return;
     deleteLessonMutation.mutate(lesson.lesson_id);
+  };
+
+  const handleEditLessonStart = (lesson) => {
+    setEditingLessonId(lesson.lesson_id);
+    setEditLessonForm({
+      title: lesson.title,
+      video_url: lesson.video_url || '',
+      order_index: lesson.order_index ?? '',
+    });
+    setEditLessonError('');
+  };
+
+  const handleEditLessonCancel = () => {
+    setEditingLessonId(null);
+    setEditLessonError('');
+  };
+
+  const handleEditLessonSave = (id) => {
+    if (!editLessonForm.title.trim()) {
+      setEditLessonError('Tên bài giảng không được để trống.');
+      return;
+    }
+    updateLessonMutation.mutate({
+      id,
+      data: {
+        title: editLessonForm.title,
+        video_url: resolveVideoUrl(editLessonForm.video_url) || undefined,
+        order_index: editLessonForm.order_index ? Number(editLessonForm.order_index) : undefined,
+      },
+    });
   };
 
   return (
@@ -274,15 +329,28 @@ export default function AdminCourseForm() {
               URL ảnh bìa
             </label>
             <input
-              type="url"
+              type="text"
               value={courseForm.image_url}
               onChange={(e) => setCourseForm((p) => ({ ...p, image_url: e.target.value }))}
-              placeholder="https://example.com/image.jpg"
+              placeholder="https://i.ibb.co/... hoặc https://ibb.co/..."
               className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
             />
+            <p className="text-xs text-zinc-500 mt-1">
+              Hỗ trợ ImgBB — nên dùng <span className="text-zinc-400">Direct link</span>{' '}
+              (<code className="text-zinc-400">https://i.ibb.co/...</code>) để hiển thị chính xác nhất.
+              Link chia sẻ thông thường (<code className="text-zinc-400">https://ibb.co/...</code>)
+              cũng được hỗ trợ.
+            </p>
+            {/ibb\.co\//.test(courseForm.image_url) && !/i\.ibb\.co\//.test(courseForm.image_url) && (
+              <p className="text-yellow-500 text-xs mt-1">
+                ⚠️ Đây là link trang xem ảnh ImgBB. Hệ thống sẽ tự chuyển sang ảnh trực tiếp,
+                nhưng để chắc chắn hãy dùng <strong>Direct link</strong> từ ImgBB
+                (dạng <code>https://i.ibb.co/...</code>).
+              </p>
+            )}
             {courseForm.image_url && (
               <img
-                src={courseForm.image_url}
+                src={resolveImageUrl(courseForm.image_url)}
                 alt="preview"
                 className="mt-2 h-28 rounded-lg object-cover border border-zinc-700"
                 onError={(e) => (e.currentTarget.style.display = 'none')}
@@ -339,13 +407,6 @@ export default function AdminCourseForm() {
                 className="col-span-1 sm:col-span-1 px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
               />
               <input
-                type="url"
-                placeholder="Link video (URL) *"
-                value={lessonForm.video_url}
-                onChange={(e) => setLessonForm((p) => ({ ...p, video_url: e.target.value }))}
-                className="px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
-              />
-              <input
                 type="number"
                 min="1"
                 placeholder="Thứ tự *"
@@ -353,6 +414,21 @@ export default function AdminCourseForm() {
                 onChange={(e) => setLessonForm((p) => ({ ...p, order_index: e.target.value }))}
                 className="px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
               />
+            </div>
+            <div>
+              <textarea
+                rows={3}
+                placeholder="Dán mã nhúng iframe YouTube hoặc link video trực tiếp *"
+                value={lessonForm.video_url}
+                onChange={(e) => setLessonForm((p) => ({ ...p, video_url: e.target.value }))}
+                className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 resize-none focus:outline-none focus:ring-2 focus:ring-[#8b0000] font-mono"
+              />
+              <p className="text-xs text-zinc-500 mt-1">
+                Chấp nhận: mã nhúng{' '}
+                <code className="text-zinc-400">&lt;iframe …&gt;</code>, link{' '}
+                <code className="text-zinc-400">youtube.com/watch?v=…</code>, hoặc link rút gọn{' '}
+                <code className="text-zinc-400">youtu.be/…</code>.
+              </p>
             </div>
             {lessonError && <p className="text-red-500 text-xs">{lessonError}</p>}
             <button
@@ -380,27 +456,89 @@ export default function AdminCourseForm() {
                 {lessons.map((lesson, index) => (
                   <li
                     key={lesson.lesson_id}
-                    className="flex items-center gap-3 px-4 py-3.5 hover:bg-zinc-800 transition-colors"
+                    className="px-4 py-3.5 hover:bg-zinc-800 transition-colors"
                   >
-                    <span className="w-7 h-7 rounded-full bg-zinc-800 text-[#c0392b] text-xs font-bold flex items-center justify-center shrink-0">
-                      {index + 1}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-zinc-200 truncate">
-                        {lesson.title}
-                      </p>
-                      {lesson.video_url && (
-                        <p className="text-xs text-zinc-500 truncate">{lesson.video_url}</p>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => handleDeleteLesson(lesson)}
-                      disabled={deleteLessonMutation.isPending}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors disabled:opacity-50 shrink-0"
-                    >
-                      <Trash2 size={13} />
-                      Xóa
-                    </button>
+                    {editingLessonId === lesson.lesson_id ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="w-7 h-7 rounded-full bg-zinc-700 text-[#c0392b] text-xs font-bold flex items-center justify-center shrink-0">
+                            {index + 1}
+                          </span>
+                          <input
+                            type="text"
+                            value={editLessonForm.title}
+                            onChange={(e) => setEditLessonForm((p) => ({ ...p, title: e.target.value }))}
+                            className="flex-1 px-3 py-1.5 border border-zinc-600 bg-zinc-800 text-zinc-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
+                          />
+                          <input
+                            type="number"
+                            min="1"
+                            value={editLessonForm.order_index}
+                            onChange={(e) => setEditLessonForm((p) => ({ ...p, order_index: e.target.value }))}
+                            placeholder="Thứ tự"
+                            className="w-20 px-3 py-1.5 border border-zinc-600 bg-zinc-800 text-zinc-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
+                          />
+                        </div>
+                        <textarea
+                          rows={2}
+                          value={editLessonForm.video_url}
+                          onChange={(e) => setEditLessonForm((p) => ({ ...p, video_url: e.target.value }))}
+                          placeholder="iframe / YouTube URL"
+                          className="w-full px-3 py-1.5 border border-zinc-600 bg-zinc-800 text-zinc-100 rounded-lg text-xs font-mono resize-none focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
+                        />
+                        {editLessonError && (
+                          <p className="text-red-500 text-xs">{editLessonError}</p>
+                        )}
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEditLessonSave(lesson.lesson_id)}
+                            disabled={updateLessonMutation.isPending}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-green-400 bg-green-950/30 hover:bg-green-950/60 border border-green-900/60 rounded-lg transition-colors disabled:opacity-50"
+                          >
+                            {updateLessonMutation.isPending ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+                            Lưu
+                          </button>
+                          <button
+                            onClick={handleEditLessonCancel}
+                            disabled={updateLessonMutation.isPending}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-400 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-colors disabled:opacity-50"
+                          >
+                            <X size={12} />
+                            Hủy
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3">
+                        <span className="w-7 h-7 rounded-full bg-zinc-800 text-[#c0392b] text-xs font-bold flex items-center justify-center shrink-0">
+                          {index + 1}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-zinc-200 truncate">
+                            {lesson.title}
+                          </p>
+                          {lesson.video_url && (
+                            <p className="text-xs text-zinc-500 truncate">{lesson.video_url}</p>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => handleEditLessonStart(lesson)}
+                          disabled={deleteLessonMutation.isPending}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-400 bg-blue-950/30 hover:bg-blue-950/60 border border-blue-900/60 rounded-lg transition-colors disabled:opacity-50 shrink-0"
+                        >
+                          <Pencil size={12} />
+                          Sửa
+                        </button>
+                        <button
+                          onClick={() => handleDeleteLesson(lesson)}
+                          disabled={deleteLessonMutation.isPending}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-400 bg-red-950/30 hover:bg-red-950/60 border border-red-900/60 rounded-lg transition-colors disabled:opacity-50 shrink-0"
+                        >
+                          <Trash2 size={13} />
+                          Xóa
+                        </button>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { getCourses, getCategories } from '../services/public.service';
+import { resolveImageUrl } from '../utils';
 
 function formatPrice(price) {
   if (price === 0 || price === null || price === undefined) return 'Miễn phí';
@@ -17,7 +18,7 @@ function CourseCard({ course }) {
     >
       <div className="aspect-video w-full overflow-hidden bg-zinc-800">
         <img
-          src={course.image_url || 'https://placehold.co/640x360?text=No+Image'}
+          src={resolveImageUrl(course.image_url) || 'https://placehold.co/640x360?text=No+Image'}
           alt={course.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://placehold.co/640x360?text=No+Image'; }}

@@ -2,6 +2,7 @@
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Star, Lock, PlayCircle, X, ChevronRight } from 'lucide-react';
+import { resolveVideoUrl } from '../utils';
 import { getCourseDetail } from '../services/public.service';
 import { getLessonVideo, createReview } from '../services/student.service';
 import { useAuth } from '../context/AuthContext';
@@ -94,7 +95,8 @@ export default function Learning() {
     mutationFn: (id) => getLessonVideo(id),
     onMutate: (id) => setLoadingLesson(id),
     onSuccess: (res, id) => {
-      const url = res?.data?.video_url || res?.video_url || '';
+      const raw = res?.data?.video_url || res?.video_url || '';
+      const url = resolveVideoUrl(raw);
       if (url) {
         setCurrentVideoUrl(url);
         setActiveLesson(id);
@@ -179,12 +181,14 @@ export default function Learning() {
           {/* Video player */}
           <div className="bg-black rounded-xl overflow-hidden aspect-video flex items-center justify-center">
             {currentVideoUrl ? (
-              <video
+              <iframe
                 key={currentVideoUrl}
                 src={currentVideoUrl}
-                controls
-                autoPlay
+                title="Video bài giảng"
                 className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
               />
             ) : (
               <div className="text-center text-gray-400 space-y-3">

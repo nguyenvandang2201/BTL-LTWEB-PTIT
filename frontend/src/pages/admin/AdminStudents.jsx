@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Eye, X, Loader2, BookOpen, Star, Trash2 } from 'lucide-react';
 import { getStudents, getStudentDetail, deleteReview } from '../../services/admin.service';
+import { resolveImageUrl } from '../../utils';
 
 // ── Student Detail Modal ──────────────────────────────────────
 function StudentModal({ studentId, onClose }) {
@@ -112,9 +113,10 @@ function StudentModal({ studentId, onClose }) {
                           <li key={enroll.enrollment_id || course.course_id} className="py-3.5 flex items-center gap-4">
                             {course.image_url && (
                               <img
-                                src={course.image_url}
+                                src={resolveImageUrl(course.image_url)}
                                 alt={course.title}
                                 className="w-12 h-12 rounded-lg object-cover border border-zinc-700 shrink-0"
+                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
                               />
                             )}
                             <div className="flex-1 min-w-0">
