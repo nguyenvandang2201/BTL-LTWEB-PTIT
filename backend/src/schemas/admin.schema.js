@@ -7,8 +7,8 @@ export const categorySchema = z.object({
 
 export const courseSchema = z.object({
   title: z.string().min(1, 'Tiêu đề khóa học không được để trống'),
-  price: z.number().positive('Giá phải là số dương'),
-  category_id: z.number().int('category_id phải là số nguyên'),
+  price: z.coerce.number().positive('Giá phải là số dương'),
+  category_id: z.coerce.number().int('category_id phải là số nguyên'),
   description: z.string().optional(),
   image_url: z.string().optional(),
 });
@@ -27,8 +27,8 @@ export const updateCategorySchema = z.object({
 
 export const updateCourseSchema = z.object({
   title: z.string().optional(),
-  price: z.number().positive().optional(),
-  category_id: z.number().int().optional(),
+  price: z.coerce.number().positive().optional(),
+  category_id: z.coerce.number().int().optional(),
   description: z.string().optional(),
   image_url: z.string().optional(),
 });

@@ -19,7 +19,10 @@ export const createCategory = async (req, res) => {
 
 export const createCourse = async (req, res) => {
   try {
-    const { title, price, description, category_id, image_url } = req.body;
+    const { title, description } = req.body;
+    const price = Number(req.body.price);
+    const category_id = parseInt(req.body.category_id);
+    const image_url = req.file ? req.file.path : null;
 
     const course = await prisma.course.create({
       data: { title, price, description, category_id, image_url },
@@ -78,7 +81,23 @@ export const deleteCategory = async (req, res) => {
 export const updateCourse = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    await prisma.course.update({ where: { course_id: id }, data: req.body });
+    const { title, description } = req.body;
+
+    const data = { title, description };
+
+    if (req.body.price !== undefined) data.price = Number(req.body.price);
+    if (req.body.category_id !== undefined) data.category_id = parseInt(req.body.category_id);
+
+    if (req.file) {
+      data.image_url = req.file.path;
+    } else if (req.body.image_url !== undefined) {
+      data.image_url = req.body.image_url;
+    }
+
+    // Xóa các key undefined để không ghi đè dữ liệu cũ trong DB
+    Object.keys(data).forEach((key) => data[key] === undefined && delete data[key]);
+
+    await prisma.course.update({ where: { course_id: id }, data });
     return res.status(200).json({ message: 'Cập nhật khóa học thành công' });
   } catch (error) {
     return res.status(500).json({ message: 'Lỗi máy chủ', error: error.message });

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { PlusCircle, Trash2, Loader2, ArrowLeft, CheckCircle2, Pencil, Check, X } from 'lucide-react';
+import { PlusCircle, Trash2, Loader2, ArrowLeft, CheckCircle2, Pencil, Check, X, Upload, ImageOff } from 'lucide-react';
 import { resolveImageUrl, resolveVideoUrl } from '../../utils';
 import {
   getCategories,
@@ -43,6 +43,8 @@ export default function AdminCourseForm() {
   });
   const [courseError, setCourseError] = useState('');
   const [savedCourseId, setSavedCourseId] = useState(isEdit ? Number(id) : null);
+  const [imageFile, setImageFile] = useState(null);       // File object được chọn
+  const [imagePreview, setImagePreview] = useState(null); // Object URL để preview
 
   // ── Lesson form state ─────────────────────────────────────
   const [lessonForm, setLessonForm] = useState({ title: '', video_url: '', order_index: '' });
@@ -81,6 +83,13 @@ export default function AdminCourseForm() {
       }
     }
   }, [isEdit, coursesData, id]);
+
+  // ── Cleanup object URL tránh memory leak ─────────────────
+  useEffect(() => {
+    return () => {
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+    };
+  }, [imagePreview]);
 
   // ── Fetch lessons of this course ──────────────────────────
   const { data: lessonsData, refetch: refetchLessons } = useQuery({
@@ -160,12 +169,29 @@ export default function AdminCourseForm() {
       setCourseError('Tên khóa học không được để trống.');
       return;
     }
-    const payload = {
-      ...courseForm,
-      price: courseForm.price === '' ? 0 : Number(courseForm.price),
-      category_id: courseForm.category_id ? Number(courseForm.category_id) : undefined,
-    };
-    courseMutation.mutate(payload);
+
+    const fd = new FormData();
+    fd.append('title', courseForm.title);
+    fd.append('price', courseForm.price === '' ? '0' : String(courseForm.price));
+    if (courseForm.category_id) fd.append('category_id', String(courseForm.category_id));
+    if (courseForm.description) fd.append('description', courseForm.description);
+    if (imageFile) fd.append('image', imageFile);
+
+    courseMutation.mutate(fd);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleClearImage = () => {
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   const handleLessonSubmit = (e) => {
@@ -323,39 +349,58 @@ export default function AdminCourseForm() {
             />
           </div>
 
-          {/* Image URL */}
+          {/* Image Upload */}
           <div>
             <label className="block text-sm font-medium text-zinc-300 mb-1.5">
-              URL ảnh bìa
+              Ảnh bìa
             </label>
-            <input
-              type="text"
-              value={courseForm.image_url}
-              onChange={(e) => setCourseForm((p) => ({ ...p, image_url: e.target.value }))}
-              placeholder="https://i.ibb.co/... hoặc https://ibb.co/..."
-              className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
-            />
-            <p className="text-xs text-zinc-500 mt-1">
-              Hỗ trợ ImgBB — nên dùng <span className="text-zinc-400">Direct link</span>{' '}
-              (<code className="text-zinc-400">https://i.ibb.co/...</code>) để hiển thị chính xác nhất.
-              Link chia sẻ thông thường (<code className="text-zinc-400">https://ibb.co/...</code>)
-              cũng được hỗ trợ.
-            </p>
-            {/ibb\.co\//.test(courseForm.image_url) && !/i\.ibb\.co\//.test(courseForm.image_url) && (
-              <p className="text-yellow-500 text-xs mt-1">
-                ⚠️ Đây là link trang xem ảnh ImgBB. Hệ thống sẽ tự chuyển sang ảnh trực tiếp,
-                nhưng để chắc chắn hãy dùng <strong>Direct link</strong> từ ImgBB
-                (dạng <code>https://i.ibb.co/...</code>).
-              </p>
+
+            {/* Preview */}
+            {(imagePreview || courseForm.image_url) ? (
+              <div className="relative mb-3 inline-block">
+                <img
+                  src={imagePreview || resolveImageUrl(courseForm.image_url)}
+                  alt="preview"
+                  className="h-32 w-auto rounded-lg object-cover border border-zinc-700"
+                  onError={(e) => (e.currentTarget.style.display = 'none')}
+                />
+                {imageFile && (
+                  <button
+                    type="button"
+                    onClick={handleClearImage}
+                    title="Bỏ ảnh đã chọn"
+                    className="absolute -top-2 -right-2 w-5 h-5 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center text-white transition-colors"
+                  >
+                    <X size={10} />
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="mb-3 flex items-center justify-center h-28 w-52 rounded-lg border-2 border-dashed border-zinc-700 bg-zinc-800/50 text-zinc-500">
+                <div className="flex flex-col items-center gap-1">
+                  <ImageOff size={20} />
+                  <span className="text-xs">Chưa có ảnh bìa</span>
+                </div>
+              </div>
             )}
-            {courseForm.image_url && (
-              <img
-                src={resolveImageUrl(courseForm.image_url)}
-                alt="preview"
-                className="mt-2 h-28 rounded-lg object-cover border border-zinc-700"
-                onError={(e) => (e.currentTarget.style.display = 'none')}
+
+            {/* File picker button */}
+            <label className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 text-sm font-medium rounded-lg cursor-pointer transition-colors border border-zinc-600">
+              <Upload size={14} />
+              {imageFile ? imageFile.name : 'Chọn ảnh từ máy tính'}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={handleImageChange}
               />
-            )}
+            </label>
+            <p className="text-xs text-zinc-500 mt-1.5">
+              Hỗ trợ JPG, PNG, WebP. Ảnh sẽ được tải lên Cloudinary.
+              {isEdit && !imageFile && courseForm.image_url && (
+                <span className="text-zinc-400"> Giữ nguyên ảnh cũ nếu không chọn file mới.</span>
+              )}
+            </p>
           </div>
 
           {courseError && (

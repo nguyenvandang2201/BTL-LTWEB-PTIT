@@ -19,11 +19,15 @@ export const deleteCategory = async (id) =>
 export const getAdminCourses = async () =>
   axiosInstance.get('/courses');
 
-export const createCourse = async (data) =>
-  axiosInstance.post('/admin/courses', data);
+export const createCourse = async (formData) =>
+  axiosInstance.post('/admin/courses', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
 
-export const updateCourse = async (id, data) =>
-  axiosInstance.put(`/admin/courses/${id}`, data);
+export const updateCourse = async (id, formData) =>
+  axiosInstance.put(`/admin/courses/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
 
 export const deleteCourse = async (id) =>
   axiosInstance.delete(`/admin/courses/${id}`);
