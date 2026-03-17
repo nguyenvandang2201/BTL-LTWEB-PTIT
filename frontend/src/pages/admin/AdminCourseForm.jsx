@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusCircle, Trash2, Loader2, ArrowLeft, CheckCircle2, Pencil, Check, X, Upload, ImageOff } from 'lucide-react';
@@ -7,7 +7,6 @@ import {
   getCategories,
   createCourse,
   updateCourse,
-  getAdminCourses,
   createLesson,
   updateLesson,
   deleteLesson,
@@ -45,6 +44,8 @@ export default function AdminCourseForm() {
   const [savedCourseId, setSavedCourseId] = useState(isEdit ? Number(id) : null);
   const [imageFile, setImageFile] = useState(null);       // File object được chọn
   const [imagePreview, setImagePreview] = useState(null); // Object URL để preview
+  const [removeImage, setRemoveImage] = useState(false);  // Xóa ảnh hiện có
+  const formInitialized = useRef(false);
 
   // ── Lesson form state ─────────────────────────────────────
   const [lessonForm, setLessonForm] = useState({ title: '', video_url: '', order_index: '' });
@@ -61,29 +62,6 @@ export default function AdminCourseForm() {
   });
   const categories = catData?.data || catData || [];
 
-  // ── Fetch course detail (edit mode) ──────────────────────
-  const { data: coursesData } = useQuery({
-    queryKey: ['admin', 'courses'],
-    queryFn: getAdminCourses,
-    enabled: isEdit,
-  });
-
-  useEffect(() => {
-    if (isEdit && coursesData) {
-      const list = coursesData?.data || coursesData || [];
-      const found = list.find((c) => c.course_id === Number(id));
-      if (found) {
-        setCourseForm({
-          title: found.title || '',
-          price: found.price ?? '',
-          category_id: found.category_id ?? '',
-          description: found.description || '',
-          image_url: found.image_url || '',
-        });
-      }
-    }
-  }, [isEdit, coursesData, id]);
-
   // ── Cleanup object URL tránh memory leak ─────────────────
   useEffect(() => {
     return () => {
@@ -91,14 +69,26 @@ export default function AdminCourseForm() {
     };
   }, [imagePreview]);
 
-  // ── Fetch lessons of this course ──────────────────────────
+  // ── Fetch lessons (và full course info khi edit) ──────────
   const { data: lessonsData, refetch: refetchLessons } = useQuery({
     queryKey: ['admin', 'lessons', savedCourseId],
     queryFn: () => getAdminLessons(savedCourseId),
     enabled: !!savedCourseId,
   });
-  // getAdminLessons now returns the full course object; extract lessons from it
   const lessons = lessonsData?.lessons || [];
+
+  // In edit mode: khởi tạo form từ course detail trả về bởi admin endpoint
+  useEffect(() => {
+    if (!isEdit || !lessonsData || formInitialized.current) return;
+    formInitialized.current = true;
+    setCourseForm({
+      title: lessonsData.title || '',
+      price: lessonsData.price ?? '',
+      category_id: lessonsData.category_id ?? '',
+      description: lessonsData.description || '',
+      image_url: lessonsData.image_url || '',
+    });
+  }, [isEdit, lessonsData]);
 
   // ── Create / Update course ────────────────────────────────
   const courseMutation = useMutation({
@@ -106,8 +96,16 @@ export default function AdminCourseForm() {
       isEdit ? updateCourse(Number(id), data) : createCourse(data),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'courses'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'lessons', savedCourseId] });
       setCourseError('');
-      if (!isEdit) {
+      setImageFile(null);
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+      setImagePreview(null);
+      setRemoveImage(false);
+      if (isEdit) {
+        // Cho phép effect re-init form sau khi refetch để cập nhật image_url mới
+        formInitialized.current = false;
+      } else {
         const newId = res?.data?.course_id || res?.course_id;
         if (newId) setSavedCourseId(newId);
       }
@@ -175,7 +173,11 @@ export default function AdminCourseForm() {
     fd.append('price', courseForm.price === '' ? '0' : String(courseForm.price));
     if (courseForm.category_id) fd.append('category_id', String(courseForm.category_id));
     if (courseForm.description) fd.append('description', courseForm.description);
-    if (imageFile) fd.append('image', imageFile);
+    if (imageFile) {
+      fd.append('image', imageFile);
+    } else if (isEdit && removeImage) {
+      fd.append('image_url', ''); // signal backend to clear the image
+    }
 
     courseMutation.mutate(fd);
   };
@@ -186,12 +188,26 @@ export default function AdminCourseForm() {
     if (imagePreview) URL.revokeObjectURL(imagePreview);
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
+    setRemoveImage(false); // chọn ảnh mới → hủy trạng thái xóa ảnh cũ
   };
 
   const handleClearImage = () => {
     if (imagePreview) URL.revokeObjectURL(imagePreview);
     setImageFile(null);
     setImagePreview(null);
+    // reset file input
+    const fileInput = document.querySelector('input[type="file"][accept]');
+    if (fileInput) fileInput.value = '';
+  };
+
+  const handleRemoveExistingImage = () => {
+    setCourseForm((p) => ({ ...p, image_url: '' }));
+    setRemoveImage(true);
+  };
+
+  const handleUndoRemoveImage = () => {
+    setCourseForm((p) => ({ ...p, image_url: lessonsData?.image_url || '' }));
+    setRemoveImage(false);
   };
 
   const handleLessonSubmit = (e) => {
@@ -356,19 +372,41 @@ export default function AdminCourseForm() {
             </label>
 
             {/* Preview */}
-            {(imagePreview || courseForm.image_url) ? (
+            {imagePreview ? (
+              // Ảnh mới vừa chọn
               <div className="relative mb-3 inline-block">
                 <img
-                  src={imagePreview || resolveImageUrl(courseForm.image_url)}
-                  alt="preview"
+                  src={imagePreview}
+                  alt="preview mới"
                   className="h-32 w-auto rounded-lg object-cover border border-zinc-700"
                   onError={(e) => (e.currentTarget.style.display = 'none')}
                 />
-                {imageFile && (
+                <button
+                  type="button"
+                  onClick={handleClearImage}
+                  title="Bỏ ảnh vừa chọn"
+                  className="absolute -top-2 -right-2 w-5 h-5 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center text-white transition-colors"
+                >
+                  <X size={10} />
+                </button>
+                <span className="block text-xs text-zinc-400 mt-1 truncate max-w-[160px]">
+                  {imageFile?.name}
+                </span>
+              </div>
+            ) : courseForm.image_url ? (
+              // Ảnh đang lưu trên server
+              <div className="relative mb-3 inline-block">
+                <img
+                  src={resolveImageUrl(courseForm.image_url)}
+                  alt="ảnh hiện tại"
+                  className="h-32 w-auto rounded-lg object-cover border border-zinc-700"
+                  onError={(e) => (e.currentTarget.style.display = 'none')}
+                />
+                {isEdit && (
                   <button
                     type="button"
-                    onClick={handleClearImage}
-                    title="Bỏ ảnh đã chọn"
+                    onClick={handleRemoveExistingImage}
+                    title="Xóa ảnh hiện tại"
                     className="absolute -top-2 -right-2 w-5 h-5 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center text-white transition-colors"
                   >
                     <X size={10} />
@@ -376,11 +414,27 @@ export default function AdminCourseForm() {
                 )}
               </div>
             ) : (
+              // Chưa có ảnh hoặc đã xóa
               <div className="mb-3 flex items-center justify-center h-28 w-52 rounded-lg border-2 border-dashed border-zinc-700 bg-zinc-800/50 text-zinc-500">
                 <div className="flex flex-col items-center gap-1">
                   <ImageOff size={20} />
-                  <span className="text-xs">Chưa có ảnh bìa</span>
+                  <span className="text-xs">
+                    {removeImage ? 'Ảnh sẽ bị xóa khi lưu' : 'Chưa có ảnh bìa'}
+                  </span>
                 </div>
+              </div>
+            )}
+
+            {/* Undo remove */}
+            {removeImage && !imageFile && (
+              <div className="mb-2">
+                <button
+                  type="button"
+                  onClick={handleUndoRemoveImage}
+                  className="text-xs text-zinc-400 hover:text-zinc-200 underline underline-offset-2"
+                >
+                  Hoàn tác xóa ảnh
+                </button>
               </div>
             )}
 

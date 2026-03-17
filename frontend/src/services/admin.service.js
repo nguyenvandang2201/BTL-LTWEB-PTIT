@@ -33,10 +33,9 @@ export const deleteCourse = async (id) =>
   axiosInstance.delete(`/admin/courses/${id}`);
 
 // ── Lessons ───────────────────────────────────────────────────
-// Uses public course-detail endpoint (no admin GET lessons route exists)
-// Returns full course object; extract .lessons from the result
+// Uses admin course-detail endpoint — returns full course including all lesson video_urls
 export const getAdminLessons = async (courseId) =>
-  axiosInstance.get(`/courses/${courseId}`);
+  axiosInstance.get(`/admin/courses/${courseId}`);
 
 export const createLesson = async (data) =>
   axiosInstance.post('/admin/lessons', data);

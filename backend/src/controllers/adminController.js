@@ -78,6 +78,26 @@ export const deleteCategory = async (req, res) => {
   }
 };
 
+export const getCourseAdmin = async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const course = await prisma.course.findUnique({
+      where: { course_id: id },
+      include: {
+        category: { select: { name: true } },
+        lessons: {
+          select: { lesson_id: true, title: true, video_url: true, order_index: true },
+          orderBy: { order_index: 'asc' },
+        },
+      },
+    });
+    if (!course) return res.status(404).json({ message: 'Không tìm thấy khóa học' });
+    return res.status(200).json(course);
+  } catch (error) {
+    return res.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
+  }
+};
+
 export const updateCourse = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -91,7 +111,7 @@ export const updateCourse = async (req, res) => {
     if (req.file) {
       data.image_url = req.file.path;
     } else if (req.body.image_url !== undefined) {
-      data.image_url = req.body.image_url;
+      data.image_url = req.body.image_url === '' ? null : req.body.image_url;
     }
 
     // Xóa các key undefined để không ghi đè dữ liệu cũ trong DB
