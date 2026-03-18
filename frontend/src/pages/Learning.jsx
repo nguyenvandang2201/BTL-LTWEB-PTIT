@@ -1,10 +1,10 @@
-﻿import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+﻿import { useEffect, useState } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Star, Lock, PlayCircle, X, ChevronRight } from 'lucide-react';
+import { Star, Lock, Unlock, PlayCircle, X, ChevronRight } from 'lucide-react';
 import { resolveVideoUrl } from '../utils';
 import { getCourseDetail } from '../services/public.service';
-import { getLessonVideo, createReview } from '../services/student.service';
+import { getLessonVideo, createReview, getMyCourses } from '../services/student.service';
 import { useAuth } from '../context/AuthContext';
 
 // ── Star picker ──────────────────────────────────────────────
@@ -64,6 +64,7 @@ function Modal({ message, type = 'error', onClose }) {
 // ── Main component ─────────────────────────────────────────────
 export default function Learning() {
   const { lessonId } = useParams();
+  const location = useLocation();
   const { auth } = useAuth();
   const queryClient = useQueryClient();
 
@@ -74,6 +75,9 @@ export default function Learning() {
   const [activeLesson, setActiveLesson] = useState(null);
   const [loadingLesson, setLoadingLesson] = useState(null);
   const [modal, setModal] = useState(null); // { message, type }
+  const [didAutoPreview, setDidAutoPreview] = useState(false);
+
+  const previewLessonId = Number(new URLSearchParams(location.search).get('previewLessonId'));
 
   // Review form state
   const [rating, setRating] = useState(5);
@@ -86,9 +90,20 @@ export default function Learning() {
     enabled: !!courseId,
   });
 
+  const { data: myCoursesData } = useQuery({
+    queryKey: ['student', 'my-courses'],
+    queryFn: getMyCourses,
+    enabled: !!auth?.token,
+  });
+
   const course = data?.data || data;
   const lessons = course?.lessons || [];
   const reviews = course?.reviews || [];
+  const myCourses = myCoursesData?.data || myCoursesData || [];
+  const isPurchased = myCourses.some((enrollment) => {
+    const purchasedCourse = enrollment?.course || enrollment;
+    return Number(purchasedCourse?.course_id) === Number(courseId);
+  });
 
   // Mutation: get video URL
   const videoMutation = useMutation({
@@ -152,6 +167,28 @@ export default function Learning() {
     if (!comment.trim()) return;
     reviewMutation.mutate({ course_id: Number(courseId), rating, comment });
   };
+
+  useEffect(() => {
+    if (didAutoPreview || !previewLessonId || lessons.length === 0) return;
+
+    const previewLesson = lessons.find((l) => l.lesson_id === previewLessonId);
+    if (!previewLesson) {
+      setDidAutoPreview(true);
+      return;
+    }
+
+    if (!previewLesson.is_locked && previewLesson.video_url) {
+      const url = resolveVideoUrl(previewLesson.video_url);
+      if (url) {
+        setCurrentVideoUrl(url);
+        setActiveLesson(previewLesson.lesson_id);
+      }
+    } else {
+      videoMutation.mutate(previewLesson.lesson_id);
+    }
+
+    setDidAutoPreview(true);
+  }, [didAutoPreview, previewLessonId, lessons]);
 
   if (isLoading) {
     return (
@@ -306,8 +343,10 @@ export default function Learning() {
                       <span className={`text-sm flex-1 line-clamp-2 ${isActive ? 'text-[#c0392b] font-medium' : 'text-zinc-300'}`}>
                         {lesson.title}
                       </span>
-                      {lesson.is_locked && !isActive ? (
+                      {lesson.is_locked && !isActive && !isPurchased ? (
                         <Lock size={14} className="text-zinc-500 shrink-0" />
+                      ) : lesson.is_locked && !isActive && isPurchased ? (
+                        <Unlock size={14} className="text-emerald-500 shrink-0" />
                       ) : (
                         <ChevronRight size={14} className="text-zinc-500 shrink-0" />
                       )}

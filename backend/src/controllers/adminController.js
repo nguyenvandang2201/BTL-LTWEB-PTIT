@@ -196,6 +196,22 @@ export const getStudentDetail = async (req, res) => {
         enrollments: {
           include: { course: true },
         },
+        reviews: {
+          select: {
+            review_id: true,
+            course_id: true,
+            rating: true,
+            comment: true,
+            created_at: true,
+            course: {
+              select: {
+                course_id: true,
+                title: true,
+              },
+            },
+          },
+          orderBy: { created_at: 'desc' },
+        },
       },
     });
     if (!student) {

@@ -1,8 +1,8 @@
 ﻿import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Lock, Star, BookOpen, User, ShoppingCart, Trash2, PlayCircle } from 'lucide-react';
+import { Lock, Unlock, Star, BookOpen, User, ShoppingCart, Trash2, PlayCircle } from 'lucide-react';
 import { getCourseDetail } from '../services/public.service';
-import { enrollCourse } from '../services/student.service';
+import { enrollCourse, getMyCourses } from '../services/student.service';
 import { deleteReview } from '../services/admin.service';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
@@ -78,6 +78,12 @@ export default function CourseDetail() {
     enabled: !!id,
   });
 
+  const { data: myCoursesData } = useQuery({
+    queryKey: ['student', 'my-courses'],
+    queryFn: getMyCourses,
+    enabled: !!auth?.token,
+  });
+
   const course = data?.data || data;
 
   if (isLoading) {
@@ -98,6 +104,11 @@ export default function CourseDetail() {
 
   const lessons = course.lessons || [];
   const reviews = course.reviews || [];
+  const myCourses = myCoursesData?.data || myCoursesData || [];
+  const isPurchased = myCourses.some((enrollment) => {
+    const purchasedCourse = enrollment?.course || enrollment;
+    return Number(purchasedCourse?.course_id) === Number(id);
+  });
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 page-enter">
@@ -123,6 +134,9 @@ export default function CourseDetail() {
             </h1>
             <p className="text-zinc-300 leading-relaxed">
               {course.description || 'Chưa có mô tả cho khóa học này.'}
+            </p>
+            <p className="text-xs text-zinc-500 mt-2">
+              Bạn có thể xem thử 2 bài giảng đầu tiên của khóa học.
             </p>
           </div>
           <div className="flex items-center gap-4 text-sm text-zinc-400">
@@ -209,16 +223,24 @@ export default function CourseDetail() {
                   </span>
                   <span className="text-zinc-200 text-sm font-medium">{lesson.title}</span>
                 </div>
-                {lesson.is_locked ? (
+                {lesson.is_locked && !isPurchased ? (
                   <div className="flex items-center gap-1.5 text-zinc-500 text-xs shrink-0">
                     <Lock size={14} />
                     <span>Đã khóa</span>
                   </div>
+                ) : lesson.is_locked && isPurchased ? (
+                  <div className="flex items-center gap-1.5 text-emerald-500 text-xs shrink-0">
+                    <Unlock size={14} />
+                    <span>Đã mở khóa</span>
+                  </div>
                 ) : (
-                  <div className="flex items-center gap-1.5 text-green-500 text-xs shrink-0">
+                  <button
+                    onClick={() => navigate(`/learning/${id}?previewLessonId=${lesson.lesson_id}`)}
+                    className="inline-flex items-center gap-1.5 text-green-500 text-xs shrink-0 hover:text-green-400 transition-colors"
+                  >
                     <PlayCircle size={14} />
                     <span>Xem thử</span>
-                  </div>
+                  </button>
                 )}
               </div>
             ))}
