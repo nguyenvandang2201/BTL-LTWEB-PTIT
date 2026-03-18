@@ -134,7 +134,35 @@ export const updateCourse = async (req, res) => {
 export const deleteCourse = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    await prisma.course.delete({ where: { course_id: id } });
+
+    // Check if course exists
+    const course = await prisma.course.findUnique({
+      where: { course_id: id },
+    });
+    if (!course) {
+      return res.status(404).json({ message: 'Không tìm thấy khóa học' });
+    }
+
+    // Delete related reviews first
+    await prisma.review.deleteMany({
+      where: { course_id: id },
+    });
+
+    // Delete related enrollments
+    await prisma.enrollment.deleteMany({
+      where: { course_id: id },
+    });
+
+    // Delete lessons (cascade is set on the schema, but we do it explicitly for clarity)
+    await prisma.lesson.deleteMany({
+      where: { course_id: id },
+    });
+
+    // Finally, delete the course
+    await prisma.course.delete({
+      where: { course_id: id },
+    });
+
     return res.status(200).json({ message: 'Xóa khóa học thành công' });
   } catch (error) {
     return res.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
