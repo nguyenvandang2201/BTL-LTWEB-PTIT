@@ -8,7 +8,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = new CloudinaryStorage({
+const imageStorage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: 'courses',
@@ -16,6 +16,16 @@ const storage = new CloudinaryStorage({
   },
 });
 
-const uploadCloud = multer({ storage });
+const videoStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'lessons',
+    resource_type: 'video',
+    allowed_formats: ['mp4', 'mov', 'avi', 'webm', 'mkv', 'm4v'],
+  },
+});
 
-export default uploadCloud;
+export const uploadCourseImage = multer({ storage: imageStorage });
+export const uploadLessonVideo = multer({ storage: videoStorage });
+
+export default uploadCourseImage;

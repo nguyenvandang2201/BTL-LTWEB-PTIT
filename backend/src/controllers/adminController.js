@@ -36,7 +36,14 @@ export const createCourse = async (req, res) => {
 
 export const createLesson = async (req, res) => {
   try {
-    const { course_id, title, video_url, order_index } = req.body;
+    const course_id = Number(req.body.course_id);
+    const title = req.body.title;
+    const order_index = Number(req.body.order_index);
+    const video_url = req.file?.path || req.body.video_url;
+
+    if (!video_url) {
+      return res.status(400).json({ message: 'Vui lòng nhập link video hoặc tải file video.' });
+    }
 
     const lesson = await prisma.lesson.create({
       data: { course_id, title, video_url, order_index },
@@ -137,7 +144,20 @@ export const deleteCourse = async (req, res) => {
 export const updateLesson = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    await prisma.lesson.update({ where: { lesson_id: id }, data: req.body });
+    const data = {};
+
+    if (req.body.title !== undefined) data.title = req.body.title;
+    if (req.body.order_index !== undefined) data.order_index = Number(req.body.order_index);
+
+    if (req.file) {
+      data.video_url = req.file.path;
+    } else if (req.body.video_url !== undefined) {
+      data.video_url = req.body.video_url;
+    }
+
+    Object.keys(data).forEach((key) => data[key] === undefined && delete data[key]);
+
+    await prisma.lesson.update({ where: { lesson_id: id }, data });
     return res.status(200).json({ message: 'Cập nhật bài giảng thành công' });
   } catch (error) {
     return res.status(500).json({ message: 'Lỗi máy chủ', error: error.message });

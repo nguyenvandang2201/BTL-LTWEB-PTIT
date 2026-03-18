@@ -4,7 +4,7 @@ import { isAdmin } from '../middlewares/roleMiddleware.js';
 import { validate } from '../middlewares/validateMiddleware.js';
 import { categorySchema, courseSchema, lessonSchema, updateCategorySchema, updateCourseSchema, updateLessonSchema } from '../schemas/admin.schema.js';
 import { createCategory, createCourse, createLesson, updateCategory, deleteCategory, getCourseAdmin, updateCourse, deleteCourse, updateLesson, deleteLesson, getStudents, getStudentDetail, deleteReview } from '../controllers/adminController.js';
-import uploadCloud from '../config/cloudinary.js';
+import { uploadCourseImage, uploadLessonVideo } from '../config/cloudinary.js';
 
 const router = Router();
 
@@ -13,12 +13,12 @@ router.put('/categories/:id', verifyToken, isAdmin, validate(updateCategorySchem
 router.delete('/categories/:id', verifyToken, isAdmin, deleteCategory);
 
 router.get('/courses/:id', verifyToken, isAdmin, getCourseAdmin);
-router.post('/courses', verifyToken, isAdmin, uploadCloud.single('image'), validate(courseSchema), createCourse);
-router.put('/courses/:id', verifyToken, isAdmin, uploadCloud.single('image'), validate(updateCourseSchema), updateCourse);
+router.post('/courses', verifyToken, isAdmin, uploadCourseImage.single('image'), validate(courseSchema), createCourse);
+router.put('/courses/:id', verifyToken, isAdmin, uploadCourseImage.single('image'), validate(updateCourseSchema), updateCourse);
 router.delete('/courses/:id', verifyToken, isAdmin, deleteCourse);
 
-router.post('/lessons', verifyToken, isAdmin, validate(lessonSchema), createLesson);
-router.put('/lessons/:id', verifyToken, isAdmin, validate(updateLessonSchema), updateLesson);
+router.post('/lessons', verifyToken, isAdmin, uploadLessonVideo.single('video'), validate(lessonSchema), createLesson);
+router.put('/lessons/:id', verifyToken, isAdmin, uploadLessonVideo.single('video'), validate(updateLessonSchema), updateLesson);
 router.delete('/lessons/:id', verifyToken, isAdmin, deleteLesson);
 
 router.get('/students', verifyToken, isAdmin, getStudents);

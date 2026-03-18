@@ -51,10 +51,14 @@ export default function AdminCourseForm() {
   // ── Lesson form state ─────────────────────────────────────
   const [lessonForm, setLessonForm] = useState({ title: '', video_url: '', order_index: '' });
   const [lessonError, setLessonError] = useState('');
+  const [lessonVideoFile, setLessonVideoFile] = useState(null);
+  const lessonVideoInputRef = useRef(null);
 
   const [editingLessonId, setEditingLessonId] = useState(null);
   const [editLessonForm, setEditLessonForm] = useState({ title: '', video_url: '', order_index: '' });
   const [editLessonError, setEditLessonError] = useState('');
+  const [editLessonVideoFile, setEditLessonVideoFile] = useState(null);
+  const editLessonVideoInputRef = useRef(null);
 
   // ── Fetch categories ──────────────────────────────────────
   const { data: catData } = useQuery({
@@ -124,6 +128,8 @@ export default function AdminCourseForm() {
     onSuccess: () => {
       refetchLessons();
       setLessonForm({ title: '', video_url: '', order_index: '' });
+      setLessonVideoFile(null);
+      if (lessonVideoInputRef.current) lessonVideoInputRef.current.value = '';
       setLessonError('');
     },
     onError: (err) => {
@@ -215,20 +221,38 @@ export default function AdminCourseForm() {
       setLessonError('Tên bài giảng không được để trống.');
       return;
     }
-    if (!lessonForm.video_url.trim()) {
-      setLessonError('URL video không được để trống.');
+    if (!lessonForm.video_url.trim() && !lessonVideoFile) {
+      setLessonError('Vui lòng nhập link video hoặc tải file video.');
       return;
     }
     if (!lessonForm.order_index) {
       setLessonError('Thứ tự bài giảng không được để trống.');
       return;
     }
-    createLessonMutation.mutate({
-      course_id: savedCourseId,
-      title: lessonForm.title,
-      video_url: resolveVideoUrl(lessonForm.video_url),
-      order_index: Number(lessonForm.order_index),
-    });
+    const fd = new FormData();
+    fd.append('course_id', String(savedCourseId));
+    fd.append('title', lessonForm.title);
+    fd.append('order_index', String(Number(lessonForm.order_index)));
+    if (lessonVideoFile) {
+      fd.append('video', lessonVideoFile);
+    } else {
+      fd.append('video_url', resolveVideoUrl(lessonForm.video_url));
+    }
+
+    createLessonMutation.mutate(fd);
+  };
+
+  const handleLessonVideoFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLessonVideoFile(file);
+    setLessonForm((p) => ({ ...p, video_url: '' }));
+    setLessonError('');
+  };
+
+  const handleClearLessonVideoFile = () => {
+    setLessonVideoFile(null);
+    if (lessonVideoInputRef.current) lessonVideoInputRef.current.value = '';
   };
 
   const handleDeleteLesson = (lesson) => {
@@ -243,11 +267,15 @@ export default function AdminCourseForm() {
       video_url: lesson.video_url || '',
       order_index: lesson.order_index ?? '',
     });
+    setEditLessonVideoFile(null);
+    if (editLessonVideoInputRef.current) editLessonVideoInputRef.current.value = '';
     setEditLessonError('');
   };
 
   const handleEditLessonCancel = () => {
     setEditingLessonId(null);
+    setEditLessonVideoFile(null);
+    if (editLessonVideoInputRef.current) editLessonVideoInputRef.current.value = '';
     setEditLessonError('');
   };
 
@@ -256,14 +284,31 @@ export default function AdminCourseForm() {
       setEditLessonError('Tên bài giảng không được để trống.');
       return;
     }
-    updateLessonMutation.mutate({
-      id,
-      data: {
-        title: editLessonForm.title,
-        video_url: resolveVideoUrl(editLessonForm.video_url) || undefined,
-        order_index: editLessonForm.order_index ? Number(editLessonForm.order_index) : undefined,
-      },
-    });
+    const fd = new FormData();
+    fd.append('title', editLessonForm.title);
+    if (editLessonForm.order_index !== '') {
+      fd.append('order_index', String(Number(editLessonForm.order_index)));
+    }
+    if (editLessonVideoFile) {
+      fd.append('video', editLessonVideoFile);
+    } else if (editLessonForm.video_url.trim()) {
+      fd.append('video_url', resolveVideoUrl(editLessonForm.video_url));
+    }
+
+    updateLessonMutation.mutate({ id, data: fd });
+  };
+
+  const handleEditLessonVideoFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setEditLessonVideoFile(file);
+    setEditLessonForm((p) => ({ ...p, video_url: '' }));
+    setEditLessonError('');
+  };
+
+  const handleClearEditLessonVideoFile = () => {
+    setEditLessonVideoFile(null);
+    if (editLessonVideoInputRef.current) editLessonVideoInputRef.current.value = '';
   };
 
   return (
@@ -518,15 +563,43 @@ export default function AdminCourseForm() {
                 rows={3}
                 placeholder="Dán mã nhúng iframe YouTube hoặc link video trực tiếp *"
                 value={lessonForm.video_url}
-                onChange={(e) => setLessonForm((p) => ({ ...p, video_url: e.target.value }))}
+                onChange={(e) => {
+                  setLessonForm((p) => ({ ...p, video_url: e.target.value }));
+                  if (lessonVideoFile) handleClearLessonVideoFile();
+                }}
                 className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 resize-none focus:outline-none focus:ring-2 focus:ring-[#8b0000] font-mono"
               />
-              <p className="text-xs text-zinc-500 mt-1">
-                Chấp nhận: mã nhúng{' '}
-                <code className="text-zinc-400">&lt;iframe …&gt;</code>, link{' '}
-                <code className="text-zinc-400">youtube.com/watch?v=…</code>, hoặc link rút gọn{' '}
-                <code className="text-zinc-400">youtu.be/…</code>.
-              </p>
+              <div className="mt-2 rounded-lg border border-zinc-700 bg-zinc-800/40 p-3 space-y-2">
+                <p className="text-xs text-zinc-500">
+                  Chấp nhận link YouTube/video hoặc tải file video từ máy tính.
+                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <label className="inline-flex items-center gap-2 px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 text-sm font-medium rounded-md cursor-pointer transition-colors border border-zinc-600">
+                    <Upload size={14} />
+                    Chọn video
+                    <input
+                      ref={lessonVideoInputRef}
+                      type="file"
+                      accept="video/mp4,video/webm,video/quicktime,video/x-matroska,video/x-msvideo"
+                      className="hidden"
+                      onChange={handleLessonVideoFileChange}
+                    />
+                  </label>
+                  {lessonVideoFile && (
+                    <button
+                      type="button"
+                      onClick={handleClearLessonVideoFile}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 border border-zinc-600 text-zinc-300 hover:bg-zinc-700 text-sm rounded-md transition-colors"
+                    >
+                      <X size={14} />
+                      Bỏ file
+                    </button>
+                  )}
+                  <span className="text-xs text-zinc-400 truncate max-w-[260px]">
+                    {lessonVideoFile ? lessonVideoFile.name : 'Chưa chọn file video'}
+                  </span>
+                </div>
+              </div>
             </div>
             {lessonError && <p className="text-red-500 text-xs">{lessonError}</p>}
             <button
@@ -580,10 +653,41 @@ export default function AdminCourseForm() {
                         <textarea
                           rows={2}
                           value={editLessonForm.video_url}
-                          onChange={(e) => setEditLessonForm((p) => ({ ...p, video_url: e.target.value }))}
+                          onChange={(e) => {
+                            setEditLessonForm((p) => ({ ...p, video_url: e.target.value }));
+                            if (editLessonVideoFile) handleClearEditLessonVideoFile();
+                          }}
                           placeholder="iframe / YouTube URL"
                           className="w-full px-3 py-1.5 border border-zinc-600 bg-zinc-800 text-zinc-100 rounded-lg text-xs font-mono resize-none focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
                         />
+                        <div className="rounded-lg border border-zinc-700 bg-zinc-800/40 p-2.5 space-y-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <label className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 text-xs font-medium rounded-md cursor-pointer transition-colors border border-zinc-600">
+                              <Upload size={12} />
+                              Chọn video mới
+                              <input
+                                ref={editLessonVideoInputRef}
+                                type="file"
+                                accept="video/mp4,video/webm,video/quicktime,video/x-matroska,video/x-msvideo"
+                                className="hidden"
+                                onChange={handleEditLessonVideoFileChange}
+                              />
+                            </label>
+                            {editLessonVideoFile && (
+                              <button
+                                type="button"
+                                onClick={handleClearEditLessonVideoFile}
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-zinc-600 text-zinc-300 hover:bg-zinc-700 text-xs rounded-md transition-colors"
+                              >
+                                <X size={12} />
+                                Bỏ file
+                              </button>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-zinc-400 truncate">
+                            {editLessonVideoFile ? `Đã chọn: ${editLessonVideoFile.name}` : 'Giữ link cũ nếu không chọn file mới'}
+                          </p>
+                        </div>
                         {editLessonError && (
                           <p className="text-red-500 text-xs">{editLessonError}</p>
                         )}

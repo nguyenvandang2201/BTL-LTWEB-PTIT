@@ -37,11 +37,19 @@ export const deleteCourse = async (id) =>
 export const getAdminLessons = async (courseId) =>
   axiosInstance.get(`/admin/courses/${courseId}`);
 
-export const createLesson = async (data) =>
-  axiosInstance.post('/admin/lessons', data);
+export const createLesson = async (data) => {
+  const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
+  return axiosInstance.post('/admin/lessons', data, isFormData
+    ? { headers: { 'Content-Type': 'multipart/form-data' } }
+    : undefined);
+};
 
-export const updateLesson = async (id, data) =>
-  axiosInstance.put(`/admin/lessons/${id}`, data);
+export const updateLesson = async (id, data) => {
+  const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
+  return axiosInstance.put(`/admin/lessons/${id}`, data, isFormData
+    ? { headers: { 'Content-Type': 'multipart/form-data' } }
+    : undefined);
+};
 
 export const deleteLesson = async (id) =>
   axiosInstance.delete(`/admin/lessons/${id}`);
