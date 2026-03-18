@@ -25,6 +25,7 @@ export default function MainLayout() {
           <nav className="flex items-center gap-6 text-sm font-medium text-zinc-300">
             <Link to="/" className="hover:text-[#c0392b] transition-colors">Trang chủ</Link>
             <Link to="/courses" className="hover:text-[#c0392b] transition-colors">Khóa học</Link>
+            <a href="https://vandang0.wordpress.com/" target="_blank" rel="noopener noreferrer" className="hover:text-[#c0392b] transition-colors">Blog</a>
             {auth ? (
               <>
                 <Link to="/my-courses" className="hover:text-[#c0392b] transition-colors">Khóa học của tôi</Link>
