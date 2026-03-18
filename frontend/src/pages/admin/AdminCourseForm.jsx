@@ -46,6 +46,7 @@ export default function AdminCourseForm() {
   const [imagePreview, setImagePreview] = useState(null); // Object URL để preview
   const [removeImage, setRemoveImage] = useState(false);  // Xóa ảnh hiện có
   const formInitialized = useRef(false);
+  const imageInputRef = useRef(null);
 
   // ── Lesson form state ─────────────────────────────────────
   const [lessonForm, setLessonForm] = useState({ title: '', video_url: '', order_index: '' });
@@ -195,9 +196,7 @@ export default function AdminCourseForm() {
     if (imagePreview) URL.revokeObjectURL(imagePreview);
     setImageFile(null);
     setImagePreview(null);
-    // reset file input
-    const fileInput = document.querySelector('input[type="file"][accept]');
-    if (fileInput) fileInput.value = '';
+    if (imageInputRef.current) imageInputRef.current.value = '';
   };
 
   const handleRemoveExistingImage = () => {
@@ -371,90 +370,90 @@ export default function AdminCourseForm() {
               Ảnh bìa
             </label>
 
-            {/* Preview */}
-            {imagePreview ? (
-              // Ảnh mới vừa chọn
-              <div className="relative mb-3 inline-block">
-                <img
-                  src={imagePreview}
-                  alt="preview mới"
-                  className="h-32 w-auto rounded-lg object-cover border border-zinc-700"
-                  onError={(e) => (e.currentTarget.style.display = 'none')}
-                />
-                <button
-                  type="button"
-                  onClick={handleClearImage}
-                  title="Bỏ ảnh vừa chọn"
-                  className="absolute -top-2 -right-2 w-5 h-5 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center text-white transition-colors"
-                >
-                  <X size={10} />
-                </button>
-                <span className="block text-xs text-zinc-400 mt-1 truncate max-w-[160px]">
-                  {imageFile?.name}
-                </span>
+            <div className="rounded-lg border border-zinc-700 bg-zinc-800/40 p-3 space-y-3">
+              <div className="flex items-center gap-3">
+                {imagePreview ? (
+                  <img
+                    src={imagePreview}
+                    alt="preview mới"
+                    className="h-14 w-24 rounded-md object-cover border border-zinc-700 shrink-0"
+                    onError={(e) => (e.currentTarget.style.display = 'none')}
+                  />
+                ) : courseForm.image_url ? (
+                  <img
+                    src={resolveImageUrl(courseForm.image_url)}
+                    alt="ảnh hiện tại"
+                    className="h-14 w-24 rounded-md object-cover border border-zinc-700 shrink-0"
+                    onError={(e) => (e.currentTarget.style.display = 'none')}
+                  />
+                ) : (
+                  <div className="h-14 w-24 rounded-md border border-dashed border-zinc-700 bg-zinc-800 flex items-center justify-center text-zinc-500 shrink-0">
+                    <ImageOff size={16} />
+                  </div>
+                )}
+
+                <div className="min-w-0">
+                  <p className="text-sm text-zinc-300">
+                    {imagePreview
+                      ? 'Đã chọn ảnh mới'
+                      : removeImage
+                      ? 'Ảnh sẽ bị xóa khi lưu'
+                      : courseForm.image_url
+                      ? 'Đang dùng ảnh hiện tại'
+                      : 'Chưa có ảnh bìa'}
+                  </p>
+                  <p className="text-xs text-zinc-500 truncate">
+                    {imageFile?.name || 'Hỗ trợ JPG, PNG, WebP'}
+                  </p>
+                </div>
               </div>
-            ) : courseForm.image_url ? (
-              // Ảnh đang lưu trên server
-              <div className="relative mb-3 inline-block">
-                <img
-                  src={resolveImageUrl(courseForm.image_url)}
-                  alt="ảnh hiện tại"
-                  className="h-32 w-auto rounded-lg object-cover border border-zinc-700"
-                  onError={(e) => (e.currentTarget.style.display = 'none')}
-                />
-                {isEdit && (
+
+              <div className="flex flex-wrap items-center gap-2">
+                <label className="inline-flex items-center gap-2 px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 text-sm font-medium rounded-md cursor-pointer transition-colors border border-zinc-600">
+                  <Upload size={14} />
+                  Chọn ảnh
+                  <input
+                    ref={imageInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                </label>
+
+                {imagePreview && (
+                  <button
+                    type="button"
+                    onClick={handleClearImage}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 border border-zinc-600 text-zinc-300 hover:bg-zinc-700 text-sm rounded-md transition-colors"
+                  >
+                    <X size={14} />
+                    Bỏ ảnh mới
+                  </button>
+                )}
+
+                {!imagePreview && isEdit && courseForm.image_url && !removeImage && (
                   <button
                     type="button"
                     onClick={handleRemoveExistingImage}
-                    title="Xóa ảnh hiện tại"
-                    className="absolute -top-2 -right-2 w-5 h-5 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center text-white transition-colors"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 border border-red-800 text-red-300 hover:bg-red-950/40 text-sm rounded-md transition-colors"
                   >
-                    <X size={10} />
+                    <X size={14} />
+                    Xóa ảnh hiện tại
+                  </button>
+                )}
+
+                {removeImage && !imagePreview && (
+                  <button
+                    type="button"
+                    onClick={handleUndoRemoveImage}
+                    className="text-sm text-zinc-400 hover:text-zinc-200 underline underline-offset-2"
+                  >
+                    Hoàn tác
                   </button>
                 )}
               </div>
-            ) : (
-              // Chưa có ảnh hoặc đã xóa
-              <div className="mb-3 flex items-center justify-center h-28 w-52 rounded-lg border-2 border-dashed border-zinc-700 bg-zinc-800/50 text-zinc-500">
-                <div className="flex flex-col items-center gap-1">
-                  <ImageOff size={20} />
-                  <span className="text-xs">
-                    {removeImage ? 'Ảnh sẽ bị xóa khi lưu' : 'Chưa có ảnh bìa'}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Undo remove */}
-            {removeImage && !imageFile && (
-              <div className="mb-2">
-                <button
-                  type="button"
-                  onClick={handleUndoRemoveImage}
-                  className="text-xs text-zinc-400 hover:text-zinc-200 underline underline-offset-2"
-                >
-                  Hoàn tác xóa ảnh
-                </button>
-              </div>
-            )}
-
-            {/* File picker button */}
-            <label className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 text-sm font-medium rounded-lg cursor-pointer transition-colors border border-zinc-600">
-              <Upload size={14} />
-              {imageFile ? imageFile.name : 'Chọn ảnh từ máy tính'}
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="hidden"
-                onChange={handleImageChange}
-              />
-            </label>
-            <p className="text-xs text-zinc-500 mt-1.5">
-              Hỗ trợ JPG, PNG, WebP. Ảnh sẽ được tải lên Cloudinary.
-              {isEdit && !imageFile && courseForm.image_url && (
-                <span className="text-zinc-400"> Giữ nguyên ảnh cũ nếu không chọn file mới.</span>
-              )}
-            </p>
+            </div>
           </div>
 
           {courseError && (
@@ -490,7 +489,7 @@ export default function AdminCourseForm() {
       </Section>
 
       {/* ── PART 2: Lessons (only when course exists) ── */}
-      {savedCourseId && (
+      {!isEdit && savedCourseId && (
         <Section
           title="Quản lý Bài giảng"
           subtitle={`Thêm và xóa bài giảng cho khóa học #${savedCourseId}.`}
