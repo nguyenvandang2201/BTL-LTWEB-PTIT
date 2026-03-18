@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusCircle, Trash2, Loader2, ArrowLeft, CheckCircle2, Pencil, Check, X, Upload, ImageOff } from 'lucide-react';
-import { resolveImageUrl, resolveVideoUrl } from '../../utils';
+import { resolveImageUrl } from '../../utils';
 import {
   getCategories,
   createCourse,
@@ -49,13 +49,13 @@ export default function AdminCourseForm() {
   const imageInputRef = useRef(null);
 
   // ── Lesson form state ─────────────────────────────────────
-  const [lessonForm, setLessonForm] = useState({ title: '', video_url: '', order_index: '' });
+  const [lessonForm, setLessonForm] = useState({ title: '', order_index: '' });
   const [lessonError, setLessonError] = useState('');
   const [lessonVideoFile, setLessonVideoFile] = useState(null);
   const lessonVideoInputRef = useRef(null);
 
   const [editingLessonId, setEditingLessonId] = useState(null);
-  const [editLessonForm, setEditLessonForm] = useState({ title: '', video_url: '', order_index: '' });
+  const [editLessonForm, setEditLessonForm] = useState({ title: '', order_index: '' });
   const [editLessonError, setEditLessonError] = useState('');
   const [editLessonVideoFile, setEditLessonVideoFile] = useState(null);
   const editLessonVideoInputRef = useRef(null);
@@ -127,7 +127,7 @@ export default function AdminCourseForm() {
     mutationFn: createLesson,
     onSuccess: () => {
       refetchLessons();
-      setLessonForm({ title: '', video_url: '', order_index: '' });
+      setLessonForm({ title: '', order_index: '' });
       setLessonVideoFile(null);
       if (lessonVideoInputRef.current) lessonVideoInputRef.current.value = '';
       setLessonError('');
@@ -221,8 +221,8 @@ export default function AdminCourseForm() {
       setLessonError('Tên bài giảng không được để trống.');
       return;
     }
-    if (!lessonForm.video_url.trim() && !lessonVideoFile) {
-      setLessonError('Vui lòng nhập link video hoặc tải file video.');
+    if (!lessonVideoFile) {
+      setLessonError('Vui lòng tải file video cho bài giảng.');
       return;
     }
     if (!lessonForm.order_index) {
@@ -233,11 +233,7 @@ export default function AdminCourseForm() {
     fd.append('course_id', String(savedCourseId));
     fd.append('title', lessonForm.title);
     fd.append('order_index', String(Number(lessonForm.order_index)));
-    if (lessonVideoFile) {
-      fd.append('video', lessonVideoFile);
-    } else {
-      fd.append('video_url', resolveVideoUrl(lessonForm.video_url));
-    }
+    fd.append('video', lessonVideoFile);
 
     createLessonMutation.mutate(fd);
   };
@@ -246,7 +242,6 @@ export default function AdminCourseForm() {
     const file = e.target.files?.[0];
     if (!file) return;
     setLessonVideoFile(file);
-    setLessonForm((p) => ({ ...p, video_url: '' }));
     setLessonError('');
   };
 
@@ -264,7 +259,6 @@ export default function AdminCourseForm() {
     setEditingLessonId(lesson.lesson_id);
     setEditLessonForm({
       title: lesson.title,
-      video_url: lesson.video_url || '',
       order_index: lesson.order_index ?? '',
     });
     setEditLessonVideoFile(null);
@@ -291,8 +285,6 @@ export default function AdminCourseForm() {
     }
     if (editLessonVideoFile) {
       fd.append('video', editLessonVideoFile);
-    } else if (editLessonForm.video_url.trim()) {
-      fd.append('video_url', resolveVideoUrl(editLessonForm.video_url));
     }
 
     updateLessonMutation.mutate({ id, data: fd });
@@ -302,7 +294,6 @@ export default function AdminCourseForm() {
     const file = e.target.files?.[0];
     if (!file) return;
     setEditLessonVideoFile(file);
-    setEditLessonForm((p) => ({ ...p, video_url: '' }));
     setEditLessonError('');
   };
 
@@ -559,19 +550,9 @@ export default function AdminCourseForm() {
               />
             </div>
             <div>
-              <textarea
-                rows={3}
-                placeholder="Dán mã nhúng iframe YouTube hoặc link video trực tiếp *"
-                value={lessonForm.video_url}
-                onChange={(e) => {
-                  setLessonForm((p) => ({ ...p, video_url: e.target.value }));
-                  if (lessonVideoFile) handleClearLessonVideoFile();
-                }}
-                className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 resize-none focus:outline-none focus:ring-2 focus:ring-[#8b0000] font-mono"
-              />
               <div className="mt-2 rounded-lg border border-zinc-700 bg-zinc-800/40 p-3 space-y-2">
                 <p className="text-xs text-zinc-500">
-                  Chấp nhận link YouTube/video hoặc tải file video từ máy tính.
+                  Tải file video trực tiếp từ máy tính.
                 </p>
                 <div className="flex flex-wrap items-center gap-2">
                   <label className="inline-flex items-center gap-2 px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 text-sm font-medium rounded-md cursor-pointer transition-colors border border-zinc-600">
@@ -650,16 +631,6 @@ export default function AdminCourseForm() {
                             className="w-20 px-3 py-1.5 border border-zinc-600 bg-zinc-800 text-zinc-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
                           />
                         </div>
-                        <textarea
-                          rows={2}
-                          value={editLessonForm.video_url}
-                          onChange={(e) => {
-                            setEditLessonForm((p) => ({ ...p, video_url: e.target.value }));
-                            if (editLessonVideoFile) handleClearEditLessonVideoFile();
-                          }}
-                          placeholder="iframe / YouTube URL"
-                          className="w-full px-3 py-1.5 border border-zinc-600 bg-zinc-800 text-zinc-100 rounded-lg text-xs font-mono resize-none focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
-                        />
                         <div className="rounded-lg border border-zinc-700 bg-zinc-800/40 p-2.5 space-y-2">
                           <div className="flex flex-wrap items-center gap-2">
                             <label className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 text-xs font-medium rounded-md cursor-pointer transition-colors border border-zinc-600">
@@ -685,7 +656,7 @@ export default function AdminCourseForm() {
                             )}
                           </div>
                           <p className="text-[11px] text-zinc-400 truncate">
-                            {editLessonVideoFile ? `Đã chọn: ${editLessonVideoFile.name}` : 'Giữ link cũ nếu không chọn file mới'}
+                            {editLessonVideoFile ? `Đã chọn: ${editLessonVideoFile.name}` : 'Giữ video hiện tại nếu không chọn file mới'}
                           </p>
                         </div>
                         {editLessonError && (

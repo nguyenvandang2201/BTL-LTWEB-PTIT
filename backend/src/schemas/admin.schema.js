@@ -16,7 +16,6 @@ export const courseSchema = z.object({
 export const lessonSchema = z.object({
   course_id: z.coerce.number().int('course_id phải là số nguyên'),
   title: z.string().min(1, 'Tiêu đề bài giảng không được để trống'),
-  video_url: z.string().url('video_url phải là URL hợp lệ').optional(),
   order_index: z.coerce.number().int('order_index phải là số nguyên'),
 });
 
@@ -35,6 +34,5 @@ export const updateCourseSchema = z.object({
 
 export const updateLessonSchema = z.object({
   title: z.string().optional(),
-  video_url: z.string().url().optional(),
   order_index: z.coerce.number().int().optional(),
 });

@@ -39,10 +39,10 @@ export const createLesson = async (req, res) => {
     const course_id = Number(req.body.course_id);
     const title = req.body.title;
     const order_index = Number(req.body.order_index);
-    const video_url = req.file?.path || req.body.video_url;
+    const video_url = req.file?.path;
 
     if (!video_url) {
-      return res.status(400).json({ message: 'Vui lòng nhập link video hoặc tải file video.' });
+      return res.status(400).json({ message: 'Vui lòng tải file video cho bài giảng.' });
     }
 
     const lesson = await prisma.lesson.create({
@@ -149,11 +149,7 @@ export const updateLesson = async (req, res) => {
     if (req.body.title !== undefined) data.title = req.body.title;
     if (req.body.order_index !== undefined) data.order_index = Number(req.body.order_index);
 
-    if (req.file) {
-      data.video_url = req.file.path;
-    } else if (req.body.video_url !== undefined) {
-      data.video_url = req.body.video_url;
-    }
+    if (req.file) data.video_url = req.file.path;
 
     Object.keys(data).forEach((key) => data[key] === undefined && delete data[key]);
 
