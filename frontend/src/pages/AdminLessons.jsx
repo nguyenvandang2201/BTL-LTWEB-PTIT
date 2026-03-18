@@ -1,6 +1,6 @@
 ﻿import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { PlusCircle, Trash2, Loader2, Pencil, Check, X } from 'lucide-react';
+import { PlusCircle, Trash2, Loader2, Pencil, Check, X, Upload } from 'lucide-react';
 import {
   getAdminCourses,
   getAdminLessons,
@@ -8,16 +8,17 @@ import {
   updateLesson,
   deleteLesson,
 } from '../services/admin.service';
-import { resolveVideoUrl } from '../utils';
 
 export default function AdminLessons() {
   const [selectedCourseId, setSelectedCourseId] = useState('');
-  const [form, setForm] = useState({ title: '', video_url: '', order_index: '' });
+  const [form, setForm] = useState({ title: '', order_index: '' });
   const [formError, setFormError] = useState('');
+  const [lessonVideoFile, setLessonVideoFile] = useState(null);
 
   const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState({ title: '', video_url: '', order_index: '' });
+  const [editForm, setEditForm] = useState({ title: '', order_index: '' });
   const [editError, setEditError] = useState('');
+  const [editVideoFile, setEditVideoFile] = useState(null);
 
   // ── Fetch courses list (to populate selector) ────────────────
   const { data: coursesData, isLoading: loadingCourses } = useQuery({
@@ -44,7 +45,8 @@ export default function AdminLessons() {
     mutationFn: createLesson,
     onSuccess: () => {
       refetch();
-      setForm({ title: '', video_url: '', order_index: '' });
+      setForm({ title: '', order_index: '' });
+      setLessonVideoFile(null);
       setFormError('');
     },
     onError: (err) => {
@@ -91,34 +93,35 @@ export default function AdminLessons() {
       setFormError('Tên bài giảng không được để trống.');
       return;
     }
-    if (!form.video_url.trim()) {
-      setFormError('URL video không được để trống.');
+    if (!lessonVideoFile) {
+      setFormError('Vui lòng tải file video.');
       return;
     }
     if (!form.order_index) {
       setFormError('Thứ tự bài giảng không được để trống.');
       return;
     }
-    createMutation.mutate({
-      course_id: Number(selectedCourseId),
-      title: form.title,
-      video_url: resolveVideoUrl(form.video_url),
-      order_index: Number(form.order_index),
-    });
+    const fd = new FormData();
+    fd.append('course_id', String(Number(selectedCourseId)));
+    fd.append('title', form.title);
+    fd.append('order_index', String(Number(form.order_index)));
+    fd.append('video', lessonVideoFile);
+    createMutation.mutate(fd);
   };
 
   const handleEditStart = (lesson) => {
     setEditingId(lesson.lesson_id);
     setEditForm({
       title: lesson.title,
-      video_url: lesson.video_url || '',
       order_index: lesson.order_index ?? '',
     });
+    setEditVideoFile(null);
     setEditError('');
   };
 
   const handleEditCancel = () => {
     setEditingId(null);
+    setEditVideoFile(null);
     setEditError('');
   };
 
@@ -127,14 +130,15 @@ export default function AdminLessons() {
       setEditError('Tên bài giảng không được để trống.');
       return;
     }
-    updateMutation.mutate({
-      id,
-      data: {
-        title: editForm.title,
-        video_url: resolveVideoUrl(editForm.video_url) || undefined,
-        order_index: editForm.order_index ? Number(editForm.order_index) : undefined,
-      },
-    });
+    const fd = new FormData();
+    fd.append('title', editForm.title);
+    if (editForm.order_index !== '') {
+      fd.append('order_index', String(Number(editForm.order_index)));
+    }
+    if (editVideoFile) {
+      fd.append('video', editVideoFile);
+    }
+    updateMutation.mutate({ id, data: fd });
   };
 
   return (
@@ -197,19 +201,39 @@ export default function AdminLessons() {
                 />
               </div>
               <div>
-                <textarea
-                  rows={3}
-                  placeholder="Dán mã nhúng iframe YouTube hoặc link video trực tiếp *"
-                  value={form.video_url}
-                  onChange={(e) => setForm((p) => ({ ...p, video_url: e.target.value }))}
-                  className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 resize-none focus:outline-none focus:ring-2 focus:ring-[#8b0000] font-mono"
-                />
-                <p className="text-xs text-zinc-500 mt-1">
-                  Chấp nhận: mã nhúng{' '}
-                  <code className="text-zinc-400">&lt;iframe …&gt;</code>, link{' '}
-                  <code className="text-zinc-400">youtube.com/watch?v=…</code>, hoặc{' '}
-                  <code className="text-zinc-400">youtu.be/…</code>.
-                </p>
+                <div className="rounded-lg border border-zinc-700 bg-zinc-800/40 p-3 space-y-2">
+                  <p className="text-xs text-zinc-500">Tải video trực tiếp từ máy tính.</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <label className="inline-flex items-center gap-2 px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 text-sm font-medium rounded-md cursor-pointer transition-colors border border-zinc-600">
+                      <Upload size={14} />
+                      Chọn video
+                      <input
+                        type="file"
+                        accept="video/mp4,video/webm,video/quicktime,video/x-matroska,video/x-msvideo"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          setLessonVideoFile(file);
+                          setFormError('');
+                        }}
+                      />
+                    </label>
+                    {lessonVideoFile && (
+                      <button
+                        type="button"
+                        onClick={() => setLessonVideoFile(null)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 border border-zinc-600 text-zinc-300 hover:bg-zinc-700 text-sm rounded-md transition-colors"
+                      >
+                        <X size={14} />
+                        Bỏ file
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-xs text-zinc-400 truncate">
+                    {lessonVideoFile ? lessonVideoFile.name : 'Chưa chọn file video'}
+                  </p>
+                </div>
               </div>
               {formError && <p className="text-red-500 text-xs">{formError}</p>}
               <button
@@ -240,7 +264,7 @@ export default function AdminLessons() {
                     <tr>
                       <th className="px-5 py-3.5 w-16">Thứ tự</th>
                       <th className="px-5 py-3.5">Tên bài giảng</th>
-                      <th className="px-5 py-3.5 hidden md:table-cell">URL Video</th>
+                      <th className="px-5 py-3.5 hidden md:table-cell">Video</th>
                       <th className="px-5 py-3.5 text-right">Hành động</th>
                     </tr>
                   </thead>
@@ -280,13 +304,36 @@ export default function AdminLessons() {
                                 )}
                               </td>
                               <td className="px-3 py-3 hidden md:table-cell">
-                                <textarea
-                                  rows={2}
-                                  value={editForm.video_url}
-                                  onChange={(e) => setEditForm((p) => ({ ...p, video_url: e.target.value }))}
-                                  placeholder="iframe / youtube URL"
-                                  className="w-full px-3 py-1.5 border border-zinc-600 bg-zinc-800 text-zinc-100 rounded-lg text-xs font-mono resize-none focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
-                                />
+                                <div className="rounded-lg border border-zinc-700 bg-zinc-800/40 p-2 space-y-2">
+                                  <label className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 text-xs font-medium rounded-md cursor-pointer transition-colors border border-zinc-600">
+                                    <Upload size={12} />
+                                    Chọn video mới
+                                    <input
+                                      type="file"
+                                      accept="video/mp4,video/webm,video/quicktime,video/x-matroska,video/x-msvideo"
+                                      className="hidden"
+                                      onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (!file) return;
+                                        setEditVideoFile(file);
+                                        setEditError('');
+                                      }}
+                                    />
+                                  </label>
+                                  {editVideoFile && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setEditVideoFile(null)}
+                                      className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-zinc-600 text-zinc-300 hover:bg-zinc-700 text-xs rounded-md transition-colors"
+                                    >
+                                      <X size={12} />
+                                      Bỏ file
+                                    </button>
+                                  )}
+                                  <p className="text-[11px] text-zinc-400 truncate">
+                                    {editVideoFile ? `Đã chọn: ${editVideoFile.name}` : 'Giữ video hiện tại nếu không chọn file mới'}
+                                  </p>
+                                </div>
                               </td>
                               <td className="px-3 py-3 text-right">
                                 <div className="flex items-center justify-end gap-2">
@@ -318,7 +365,7 @@ export default function AdminLessons() {
                                 {lesson.title}
                               </td>
                               <td className="px-5 py-4 text-zinc-500 text-xs hidden md:table-cell max-w-xs truncate">
-                                {lesson.video_url || '—'}
+                                {lesson.video_url ? 'Đã tải lên' : '—'}
                               </td>
                               <td className="px-5 py-4 text-right">
                                 <div className="flex items-center justify-end gap-2">
