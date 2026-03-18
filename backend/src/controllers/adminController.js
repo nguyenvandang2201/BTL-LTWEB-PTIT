@@ -200,9 +200,11 @@ export const deleteLesson = async (req, res) => {
 
 export const getStudents = async (req, res) => {
   try {
+    const sort = req.query.sort === 'oldest' ? 'oldest' : 'newest';
     const students = await prisma.user.findMany({
       where: { role: 'student' },
       select: { user_id: true, full_name: true, email: true, created_at: true },
+      orderBy: { created_at: sort === 'oldest' ? 'asc' : 'desc' },
     });
     return res.status(200).json(students);
   } catch (error) {

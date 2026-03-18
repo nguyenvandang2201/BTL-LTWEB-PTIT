@@ -55,8 +55,8 @@ export const deleteLesson = async (id) =>
   axiosInstance.delete(`/admin/lessons/${id}`);
 
 // ── Students ──────────────────────────────────────────────────
-export const getStudents = async () =>
-  axiosInstance.get('/admin/students');
+export const getStudents = async (sort = 'newest') =>
+  axiosInstance.get('/admin/students', { params: { sort } });
 
 export const getStudentDetail = async (id) =>
   axiosInstance.get(`/admin/students/${id}`);

@@ -203,10 +203,11 @@ function StudentModal({ studentId, onClose }) {
 // ── Main page ─────────────────────────────────────────────────
 export default function AdminStudents() {
   const [selectedStudentId, setSelectedStudentId] = useState(null);
+  const [sortOrder, setSortOrder] = useState('newest');
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['admin', 'students'],
-    queryFn: getStudents,
+    queryKey: ['admin', 'students', sortOrder],
+    queryFn: () => getStudents(sortOrder),
   });
 
   const students = data?.data || data || [];
@@ -219,6 +220,21 @@ export default function AdminStudents() {
         <p className="text-sm text-zinc-400 mt-1">
           Xem danh sách và lịch sử mua khóa học của từng học viên.
         </p>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <label htmlFor="student-sort" className="text-sm text-zinc-300">
+          Sắp xếp theo ngày đăng ký
+        </label>
+        <select
+          id="student-sort"
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+          className="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#c0392b]"
+        >
+          <option value="newest">Muộn nhất</option>
+          <option value="oldest">Sớm nhất</option>
+        </select>
       </div>
 
       {/* Student detail modal */}
