@@ -66,7 +66,7 @@ model Enrollment {
   is_paid       Boolean  @default(false)
   created_at    DateTime @default(now())
   user          User     @relation(fields: [user_id], references: [user_id])
-  course        Course   @relation(fields: [course_id], references: [course_id])
+  course        Course   @relation(fields: [course_id], references: [course_id], onDelete: Cascade)
 
   @@map("enrollments")
 }
@@ -79,7 +79,7 @@ model Review {
   comment    String?
   created_at DateTime @default(now())
   user       User     @relation(fields: [user_id], references: [user_id])
-  course     Course   @relation(fields: [course_id], references: [course_id])
+  course     Course   @relation(fields: [course_id], references: [course_id], onDelete: Cascade)
 
   @@map("reviews")
 }
