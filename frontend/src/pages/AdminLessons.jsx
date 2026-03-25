@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+﻿import { useRef, useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { PlusCircle, Trash2, Loader2, Pencil, Check, X, Upload } from 'lucide-react';
 import {
@@ -14,11 +14,13 @@ export default function AdminLessons() {
   const [form, setForm] = useState({ title: '', order_index: '' });
   const [formError, setFormError] = useState('');
   const [lessonVideoFile, setLessonVideoFile] = useState(null);
+  const lessonVideoInputRef = useRef(null);
 
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({ title: '', order_index: '' });
   const [editError, setEditError] = useState('');
   const [editVideoFile, setEditVideoFile] = useState(null);
+  const editVideoInputRef = useRef(null);
 
   // ── Fetch courses list (to populate selector) ────────────────
   const { data: coursesData, isLoading: loadingCourses } = useQuery({
@@ -47,6 +49,7 @@ export default function AdminLessons() {
       refetch();
       setForm({ title: '', order_index: '' });
       setLessonVideoFile(null);
+      if (lessonVideoInputRef.current) lessonVideoInputRef.current.value = '';
       setFormError('');
     },
     onError: (err) => {
@@ -122,6 +125,7 @@ export default function AdminLessons() {
   const handleEditCancel = () => {
     setEditingId(null);
     setEditVideoFile(null);
+    if (editVideoInputRef.current) editVideoInputRef.current.value = '';
     setEditError('');
   };
 
@@ -208,6 +212,7 @@ export default function AdminLessons() {
                       <Upload size={14} />
                       Chọn video
                       <input
+                        ref={lessonVideoInputRef}
                         type="file"
                         accept="video/mp4,video/webm,video/quicktime,video/x-matroska,video/x-msvideo"
                         className="hidden"
@@ -222,7 +227,10 @@ export default function AdminLessons() {
                     {lessonVideoFile && (
                       <button
                         type="button"
-                        onClick={() => setLessonVideoFile(null)}
+                        onClick={() => {
+                          setLessonVideoFile(null);
+                          if (lessonVideoInputRef.current) lessonVideoInputRef.current.value = '';
+                        }}
                         className="inline-flex items-center gap-1 px-3 py-1.5 border border-zinc-600 text-zinc-300 hover:bg-zinc-700 text-sm rounded-md transition-colors"
                       >
                         <X size={14} />
@@ -309,6 +317,7 @@ export default function AdminLessons() {
                                     <Upload size={12} />
                                     Chọn video mới
                                     <input
+                                      ref={editVideoInputRef}
                                       type="file"
                                       accept="video/mp4,video/webm,video/quicktime,video/x-matroska,video/x-msvideo"
                                       className="hidden"
@@ -323,7 +332,10 @@ export default function AdminLessons() {
                                   {editVideoFile && (
                                     <button
                                       type="button"
-                                      onClick={() => setEditVideoFile(null)}
+                                      onClick={() => {
+                                        setEditVideoFile(null);
+                                        if (editVideoInputRef.current) editVideoInputRef.current.value = '';
+                                      }}
                                       className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-zinc-600 text-zinc-300 hover:bg-zinc-700 text-xs rounded-md transition-colors"
                                     >
                                       <X size={12} />
