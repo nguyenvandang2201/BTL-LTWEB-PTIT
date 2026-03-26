@@ -214,6 +214,27 @@
           ]
         },
         {
+          "name": "Tìm kiếm khóa học gần đúng (backend)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/courses?q=react&category_id={{categoryId}}",
+            "description": "Tìm kiếm gần đúng theo tiêu đề (q) và có thể lọc theo danh mục (category_id)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "Xem chi tiết khóa học",
           "request": {
             "method": "GET",
@@ -575,6 +596,38 @@
                 ],
                 "url": "{{baseUrl}}/admin/reviews/{{reviewId}}"
               }
+            }
+          ]
+        },
+        {
+          "name": "Dashboard",
+          "item": [
+            {
+              "name": "Lấy top 10 khóa học được mua nhiều nhất",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/admin/dashboard/top-purchased-courses",
+                "description": "Endpoint dashboard admin trả về top 10 khóa học theo số lượt mua đã thanh toán."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "  pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ]
             }
           ]
         }

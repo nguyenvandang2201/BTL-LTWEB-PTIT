@@ -1,5 +1,38 @@
 import prisma from '../config/prisma.js';
 
+// API lấy danh sách 10 khóa học được mua nhiều nhất.
+
+export const getTopPurchasedCourses = async (req, res) => {
+  try {
+    // Dùng raw query để giữ chính xác logic SQL thống kê top khóa học đã mua.
+    // Biến topCourses dùng để chứa danh sách kết quả truy vấn trả về từ database.
+    const topCourses = await prisma.$queryRaw`
+      SELECT
+          c.course_id,
+          c.title,
+          COUNT(e.enrollment_id)::int AS total_purchases
+      FROM
+          courses c
+      JOIN
+          enrollments e ON c.course_id = e.course_id
+      WHERE
+          e.is_paid = true
+      GROUP BY
+          c.course_id,
+          c.title
+      ORDER BY
+          total_purchases DESC
+      LIMIT 10;
+    `;
+
+    // Trả về HTTP 200 cùng dữ liệu topCourses cho frontend dashboard.
+    return res.status(200).json(topCourses);
+  } catch (error) {
+    // Nếu có lỗi, trả về HTTP 500 và message lỗi để dễ debug.
+    return res.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
+  }
+};
+
 export const createCategory = async (req, res) => {
   try {
     const { name, description } = req.body;

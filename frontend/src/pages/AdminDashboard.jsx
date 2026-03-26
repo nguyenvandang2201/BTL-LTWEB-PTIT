@@ -1,6 +1,6 @@
 ﻿import { useQuery } from '@tanstack/react-query';
 import { BookOpen, Users, Tag, TrendingUp } from 'lucide-react';
-import { getAdminCourses, getCategories, getStudents } from '../services/admin.service';
+import { getAdminCourses, getCategories, getStudents, getTopPurchasedCourses } from '../services/admin.service';
 import { resolveImageUrl } from '../utils';
 
 function formatPrice(price) {
@@ -35,9 +35,21 @@ export default function AdminDashboard() {
     queryFn: getStudents,
   });
 
+  // Khai báo useQuery để gọi API lấy top 10 khóa học mua nhiều nhất.
+  const { data: topPurchasedCoursesData } = useQuery({
+    // queryKey dùng để định danh cache cho dữ liệu top purchased courses.
+    queryKey: ['admin', 'dashboard', 'top-purchased-courses'],
+    // queryFn trỏ tới service function đã định nghĩa ở admin.service.js.
+    queryFn: getTopPurchasedCourses,
+  });
+
   const courses = coursesData?.data || coursesData || [];
   const categories = categoriesData?.data || categoriesData || [];
   const students = studentsData?.data || studentsData || [];
+
+  // Chuẩn hóa dữ liệu topPurchasedCourses thành mảng để tránh lỗi khi render lần đầu.
+  // Ưu tiên lấy từ topPurchasedCoursesData.data (response axios), fallback các trường hợp khác.
+  const topPurchasedCourses = topPurchasedCoursesData?.data || topPurchasedCoursesData || [];
 
   const stats = [
     { label: 'Tổng khóa học', value: courses.length, icon: BookOpen, color: 'bg-blue-500' },
@@ -121,6 +133,56 @@ export default function AdminDashboard() {
               </li>
             ))}
           </ul>
+        )}
+      </div>
+
+      {/* Top 10 purchased courses */}
+      <div className="bg-zinc-900 rounded-xl shadow-sm border border-zinc-800 p-5">
+        {/* Tiêu đề khối bảng top 10 khóa học được mua nhiều nhất */}
+        <h3 className="text-base font-semibold text-zinc-200 mb-4">Top 10 khóa học được mua nhiều nhất</h3>
+
+        {topPurchasedCourses.length === 0 ? (
+          // Trường hợp chưa có dữ liệu mua khóa học thì hiển thị thông báo rỗng.
+          <p className="text-zinc-500 text-sm py-6 text-center">Chưa có dữ liệu mua khóa học.</p>
+        ) : (
+          // Có dữ liệu thì render bảng thống kê top purchased courses.
+          <div className="overflow-x-auto">
+            {/* Bảng hiển thị thống kê theo số lượt mua đã thanh toán */}
+            <table className="w-full text-sm text-left text-zinc-300">
+              {/* Phần tiêu đề cột của bảng */}
+              <thead className="text-xs uppercase bg-zinc-800 text-zinc-400">
+                <tr>
+                  {/* Cột số thứ tự xếp hạng */}
+                  <th className="px-4 py-3">#</th>
+                  {/* Cột mã khóa học */}
+                  <th className="px-4 py-3">Mã khóa học</th>
+                  {/* Cột tên khóa học */}
+                  <th className="px-4 py-3">Tên khóa học</th>
+                  {/* Cột tổng số lượt mua */}
+                  <th className="px-4 py-3 text-right">Số lượt mua</th>
+                </tr>
+              </thead>
+              {/* Phần nội dung dữ liệu của bảng */}
+              <tbody>
+                {/* Duyệt từng khóa học trong danh sách topPurchasedCourses để tạo từng dòng */}
+                {topPurchasedCourses.map((course, index) => (
+                  // key dùng course_id để React nhận diện mỗi row là duy nhất.
+                  <tr key={course.course_id} className="border-b border-zinc-800 hover:bg-zinc-800/50">
+                    {/* Hiển thị thứ hạng theo vị trí trong mảng (bắt đầu từ 1) */}
+                    <td className="px-4 py-3 font-medium text-zinc-200">{index + 1}</td>
+                    {/* Hiển thị mã khóa học */}
+                    <td className="px-4 py-3">{course.course_id}</td>
+                    {/* Hiển thị tên khóa học */}
+                    <td className="px-4 py-3">{course.title}</td>
+                    {/* Hiển thị tổng số lượt mua đã thanh toán */}
+                    <td className="px-4 py-3 text-right font-semibold text-[#c0392b]">
+                      {course.total_purchases}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

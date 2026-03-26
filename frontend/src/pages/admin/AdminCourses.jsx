@@ -72,6 +72,8 @@ export default function AdminCourses() {
                   <th className="px-5 py-3.5 w-14">ID</th>
                   <th className="px-5 py-3.5">Tên khóa học</th>
                   <th className="px-5 py-3.5 hidden md:table-cell">Danh mục</th>
+                  {/* Cột mới hiển thị tổng số người học đã mua khóa học */}
+                  <th className="px-5 py-3.5 hidden lg:table-cell">Số người học</th>
                   <th className="px-5 py-3.5 hidden sm:table-cell">Giá</th>
                   <th className="px-5 py-3.5 text-right">Hành động</th>
                 </tr>
@@ -79,7 +81,8 @@ export default function AdminCourses() {
               <tbody className="divide-y divide-zinc-800">
                 {courses.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-5 py-12 text-center text-zinc-500">
+                    {/* Cập nhật colSpan = 6 vì bảng hiện có tổng cộng 6 cột */}
+                    <td colSpan={6} className="px-5 py-12 text-center text-zinc-500">
                       Chưa có khóa học nào. Hãy tạo khóa học đầu tiên!
                     </td>
                   </tr>
@@ -107,6 +110,13 @@ export default function AdminCourses() {
                       <td className="px-5 py-4 text-zinc-400 hidden md:table-cell">
                         {course.category?.name || '—'}
                       </td>
+
+                      {/* Hiển thị số người học đã thanh toán của khóa học hiện tại */}
+                      <td className="px-5 py-4 text-zinc-300 font-medium hidden lg:table-cell">
+                        {/* Nếu API chưa trả total_buyers thì fallback về 0 */}
+                        {course.total_buyers ?? 0}
+                      </td>
+
                       <td className="px-5 py-4 text-[#c0392b] font-semibold hidden sm:table-cell">
                         {formatPrice(course.price)}
                       </td>

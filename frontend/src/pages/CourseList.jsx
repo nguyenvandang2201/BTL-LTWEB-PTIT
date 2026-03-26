@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Search } from 'lucide-react';
@@ -44,10 +44,32 @@ function CourseCard({ course }) {
 export default function CourseList() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  // Debounce input tìm kiếm để tránh gọi API liên tục mỗi lần gõ phím.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const { data: coursesData, isLoading, isError } = useQuery({
-    queryKey: ['courses'],
-    queryFn: getCourses,
+    // queryKey bao gồm search/category để React Query tự refetch khi filter thay đổi.
+    queryKey: ['courses', debouncedSearch, selectedCategory],
+    queryFn: () => {
+      // Yêu cầu mới: khi chưa nhập từ khóa thì luôn hiển thị toàn bộ khóa học.
+      if (!debouncedSearch) {
+        return getCourses();
+      }
+
+      // Chỉ khi có từ khóa tìm kiếm mới gửi params để backend lọc gần đúng.
+      return getCourses({
+        q: debouncedSearch,
+        category_id: selectedCategory || undefined,
+      });
+    },
   });
 
   const { data: categoriesData } = useQuery({
@@ -55,16 +77,10 @@ export default function CourseList() {
     queryFn: getCategories,
   });
 
-  const courses = coursesData?.data || coursesData || [];
+  // axiosInstance đã intercept và trả thẳng response.data,
+  // nên coursesData chính là mảng khóa học.
+  const courses = coursesData || [];
   const categories = categoriesData?.data || categoriesData || [];
-
-  const filtered = courses.filter((c) => {
-    const matchSearch = c.title.toLowerCase().includes(search.toLowerCase());
-    const matchCategory = selectedCategory
-      ? c.category_id === Number(selectedCategory)
-      : true;
-    return matchSearch && matchCategory;
-  });
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 page-enter">
@@ -111,14 +127,14 @@ export default function CourseList() {
 
       {!isLoading && !isError && (
         <>
-          <p className="text-sm text-zinc-500 mb-4">{filtered.length} khóa học</p>
-          {filtered.length === 0 ? (
+          <p className="text-sm text-zinc-500 mb-4">{courses.length} khóa học</p>
+          {courses.length === 0 ? (
             <div className="text-center py-20 text-zinc-500">
               Không có khóa học nào phù hợp với tìm kiếm.
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {filtered.map((course) => (
+              {courses.map((course) => (
                 <CourseCard key={course.course_id} course={course} />
               ))}
             </div>

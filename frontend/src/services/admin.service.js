@@ -61,6 +61,12 @@ export const getStudents = async (sort = 'newest') =>
 export const getStudentDetail = async (id) =>
   axiosInstance.get(`/admin/students/${id}`);
 
+// ── Dashboard ─────────────────────────────────────────────────
+// Hàm service gọi API lấy top 10 khóa học được mua nhiều nhất.
+export const getTopPurchasedCourses = async () =>
+  // Gửi GET request tới endpoint dashboard admin ở backend.
+  axiosInstance.get('/admin/dashboard/top-purchased-courses');
+
 // ── Reviews ───────────────────────────────────────────────────
 export const deleteReview = async (id) =>
   axiosInstance.delete(`/admin/reviews/${id}`);

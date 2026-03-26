@@ -3,7 +3,7 @@ import { verifyToken } from '../middlewares/authMiddleware.js';
 import { isAdmin } from '../middlewares/roleMiddleware.js';
 import { validate } from '../middlewares/validateMiddleware.js';
 import { categorySchema, courseSchema, lessonSchema, updateCategorySchema, updateCourseSchema, updateLessonSchema } from '../schemas/admin.schema.js';
-import { createCategory, createCourse, createLesson, updateCategory, deleteCategory, getCourseAdmin, updateCourse, deleteCourse, updateLesson, deleteLesson, getStudents, getStudentDetail, deleteReview } from '../controllers/adminController.js';
+import { createCategory, createCourse, createLesson, updateCategory, deleteCategory, getCourseAdmin, updateCourse, deleteCourse, updateLesson, deleteLesson, getStudents, getStudentDetail, deleteReview, getTopPurchasedCourses } from '../controllers/adminController.js';
 import { uploadCourseImage, uploadLessonVideo } from '../config/cloudinary.js';
 
 const router = Router();
@@ -23,6 +23,10 @@ router.delete('/lessons/:id', verifyToken, isAdmin, deleteLesson);
 
 router.get('/students', verifyToken, isAdmin, getStudents);
 router.get('/students/:id', verifyToken, isAdmin, getStudentDetail);
+
+// Khai báo endpoint dành cho dashboard admin.
+// Endpoint này dùng để lấy danh sách top khóa học được mua nhiều nhất.
+router.get('/dashboard/top-purchased-courses', verifyToken, isAdmin, getTopPurchasedCourses);
 
 router.delete('/reviews/:id', verifyToken, isAdmin, deleteReview);
 
