@@ -251,20 +251,6 @@ Bạn có thể import file `backend/postman_collection.json` để test API nha
 - Cấu hình CI (lint + test + build)
 
 ---
-## 13. Giao diện
-<img width="2829" height="1531" alt="Screenshot 2026-03-27 151831" src="https://github.com/user-attachments/assets/4d64e7a9-ecff-42c3-b4a3-fc603ca5bd87" />
-<img width="2837" height="1538" alt="Screenshot 2026-03-27 151821" src="https://github.com/user-attachments/assets/ca028380-2bd2-4c9e-b359-96e14f0e42f7" />
-<img width="2830" height="1530" alt="Screenshot 2026-03-27 151900" src="https://github.com/user-attachments/assets/d5d2667d-bbef-4f12-a74b-2d23335995fa" />
-<img width="1792" height="1614" alt="localhost_5173_login" src="https://github.com/user-attachments/assets/5b89bb13-79fb-41b9-9aa3-3b79790fc696" />
-<img width="1792" height="1614" alt="localhost_5173_login (1)" src="https://github.com/user-attachments/assets/00b4394a-4da8-47d4-b58b-30583db1c6b3" />
-<img width="1792" height="9320" alt="localhost_5173_login (2)" src="https://github.com/user-attachments/assets/d5afdab5-409f-4e8a-bb01-9fb57e9edec9" />
-<img width="1792" height="3320" alt="localhost_5173_login (3)" src="https://github.com/user-attachments/assets/4c08f665-8d15-4bf8-a869-3efd310c6f94" />
-<img width="1792" height="2938" alt="localhost_5173_login (4)" src="https://github.com/user-attachments/assets/a5332bcd-ddc3-4758-aa70-b61addc2513d" />
-<img width="1792" height="5826" alt="localhost_5173_learning_32" src="https://github.com/user-attachments/assets/fd747c88-3546-432b-a62a-5e8099d168f6" />
-<img width="1792" height="2214" alt="localhost_5173_learning_32 (1)" src="https://github.com/user-attachments/assets/7fdeed44-1c42-4da5-a683-31a44ed6245b" />
-<img width="2830" height="1531" alt="Screenshot 2026-03-27 151851" src="https://github.com/user-attachments/assets/bbed3985-ff83-4bff-86f4-c103d8ac339c" />
-<img width="2833" height="1527" alt="Screenshot 2026-03-27 151842" src="https://github.com/user-attachments/assets/8dd5217c-8a65-4027-a5ea-1ac15db77f9f" />
-
-## 14. Tác giả
+## 13. Tác giả
 
 Đồ án LTWEB - PTIT.
