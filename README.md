@@ -254,6 +254,7 @@ Bạn có thể import file `backend/postman_collection.json` để test API nha
 ## 13. Giao diện
 ![z7663609442054_de609aa1b90cc2de8947da268ad68a58](https://github.com/user-attachments/assets/bea7e25a-01b7-4f51-ad82-259c7ece5a53)
 ![z7663609442053_2c9dac75ceadec81dcafd214e5b89a0a](https://github.com/user-attachments/assets/802ff1ac-9fe7-429e-95a5-655514bec419)
+![z7663609442055_51bec242c110555f20b1adc02f6bf822](https://github.com/user-attachments/assets/f459b8f7-8422-4498-930a-506c48041869)
 ![z7663609423224_5c78365f10fd8040fff83ab98787ea2e](https://github.com/user-attachments/assets/886b179c-9b97-4ef1-be41-db69405b6fad)
 ![z7663609423222_e0fb3f614d64938e8a3a5c59eec8d03e](https://github.com/user-attachments/assets/570b99f0-eb4f-46c2-8213-8d4803b89286)
 ![z7663609404586_902147b29ed58aedc6aa8cfcd38185ed](https://github.com/user-attachments/assets/b5e2eeaf-18b1-498d-b5d9-9e6e4581d812)
@@ -265,7 +266,6 @@ Bạn có thể import file `backend/postman_collection.json` để test API nha
 ![z7663609384698_c35f88e22db98b8ea58b5a0b76ce7782](https://github.com/user-attachments/assets/2de99c10-3a9b-4a6d-a9b6-17e7351977cd)
 ![z7663609366782_f371fc57b0a3d71455fca4422af08d4b](https://github.com/user-attachments/assets/70625556-aa8b-4952-ad4e-61d35da12222)
 ![z7663609366758_f8543f74566d96331893dd08be271fd5](https://github.com/user-attachments/assets/66d1a421-4688-421c-87cc-0b89aba3f844)
-![z7663609442055_51bec242c110555f20b1adc02f6bf822](https://github.com/user-attachments/assets/f459b8f7-8422-4498-930a-506c48041869)
 
 ## 14. Tác giả
 
