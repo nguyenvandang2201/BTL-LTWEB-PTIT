@@ -252,7 +252,7 @@ Bạn có thể import file `backend/postman_collection.json` để test API nha
 
 ---
 ## 13. Giao diện
-![z7663609442054_de609aa1b90cc2de8947da268ad68a58](https://github.com/user-attachments/assets/bea7e25a-01b7-4f51-ad82-259c7ece5a53)
+<img width="2815" height="1617" alt="Screenshot 2026-03-13 131043" src="https://github.com/user-attachments/assets/26e3f9d0-5604-4d15-b88f-9f0c734acf06" />
 ![z7663609442053_2c9dac75ceadec81dcafd214e5b89a0a](https://github.com/user-attachments/assets/802ff1ac-9fe7-429e-95a5-655514bec419)
 ![z7663609442055_51bec242c110555f20b1adc02f6bf822](https://github.com/user-attachments/assets/f459b8f7-8422-4498-930a-506c48041869)
 ![z7663609423224_5c78365f10fd8040fff83ab98787ea2e](https://github.com/user-attachments/assets/886b179c-9b97-4ef1-be41-db69405b6fad)
@@ -262,10 +262,10 @@ Bạn có thể import file `backend/postman_collection.json` để test API nha
 ![z7663609404354_359883498cbb4a61213b27b011e6dbbe](https://github.com/user-attachments/assets/0f429f54-3798-4c58-94f9-b1e09904dcf0)
 ![z7663609404353_b5d4e3e52d777009ab9cd3711afe321e](https://github.com/user-attachments/assets/dcfd0fb5-0063-459d-afad-22fd18acba0d)
 ![z7663609404352_0097b4d0232699c6638f8a0fc87d864f](https://github.com/user-attachments/assets/c9b6b89b-83b5-4ba1-9229-a8660d3b437c)
-![z7663609404350_dde21706ade28cfb25ae1b06a509d6f6](https://github.com/user-attachments/assets/13c5499c-9f06-4cc8-8dda-7c957200f45f)
 ![z7663609384698_c35f88e22db98b8ea58b5a0b76ce7782](https://github.com/user-attachments/assets/2de99c10-3a9b-4a6d-a9b6-17e7351977cd)
 ![z7663609366782_f371fc57b0a3d71455fca4422af08d4b](https://github.com/user-attachments/assets/70625556-aa8b-4952-ad4e-61d35da12222)
 ![z7663609366758_f8543f74566d96331893dd08be271fd5](https://github.com/user-attachments/assets/66d1a421-4688-421c-87cc-0b89aba3f844)
+![z7663609404350_dde21706ade28cfb25ae1b06a509d6f6](https://github.com/user-attachments/assets/13c5499c-9f06-4cc8-8dda-7c957200f45f)
 
 ## 14. Tác giả
 
