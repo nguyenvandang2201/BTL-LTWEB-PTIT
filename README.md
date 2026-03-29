@@ -251,7 +251,6 @@ Bạn có thể import file `backend/postman_collection.json` để test API nha
 - Cấu hình CI (lint + test + build)
 
 ---
-
 ## 13. Tác giả
 
 Đồ án LTWEB - PTIT.
