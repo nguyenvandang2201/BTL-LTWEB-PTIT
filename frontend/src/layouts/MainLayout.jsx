@@ -1,3 +1,13 @@
+// Layout chung cho các trang người dùng (public + student).
+// Bao gồm: Navbar cố định trên cùng, nội dung trang (Outlet), Footer.
+//
+// Navbar thay đổi theo trạng thái đăng nhập:
+//   - Chưa đăng nhập : Hiển thị "Đăng nhập" và "Đăng ký".
+//   - Đã đăng nhập   : Hiển thị "Khóa học của tôi", "Hồ sơ", "Đăng xuất".
+//                      Nếu là admin: thêm nút "Quản trị" dẫn tới /admin.
+//
+// Background có 3 animated orb decorative được xử lý bằng CSS (trong index.css).
+
 import { Link } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -30,6 +40,7 @@ export default function MainLayout() {
               <>
                 <Link to="/my-courses" className="hover:text-[#c0392b] transition-colors">Khóa học của tôi</Link>
                 <Link to="/profile" className="hover:text-[#c0392b] transition-colors">Hồ sơ</Link>
+                {/* Nút Quản trị chỉ hiển thị nếu user có role='admin' */}
                 {auth.user?.role === 'admin' && (
                   <Link
                     to="/admin"
@@ -60,7 +71,7 @@ export default function MainLayout() {
         </div>
       </header>
 
-      {/* Page content */}
+      {/* Page content — Outlet render component tương ứng với route hiện tại */}
       <main className="flex-1">
         <Outlet />
       </main>

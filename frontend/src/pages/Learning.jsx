@@ -1,4 +1,19 @@
-﻿import { useEffect, useState } from 'react';
+// Trang học bài — hiển thị video player, danh sách bài học và form đánh giá.
+//
+// Tính năng chính:
+//   - Sidebar phải: danh sách bài học với trạng thái khóa/mở khóa theo quyền.
+//   - Video player: dùng <iframe> nhúng URL youtube embed từ resolveVideoUrl().
+//   - Click vào bài học: gọi getLessonVideo → backend kiểm tra quyền, trả về video_url.
+//   - Bài miễn phí (is_locked=false): dùng luôn video_url trong course detail, không cần gọi API riêng.
+//   - Bài có phí (is_locked=true): gọi getLessonVideo, nếu 403 → hiện modal "vui lòng mua".
+//   - Auto preview: nếu URL có ?previewLessonId=X → tự động phát bài đó khi trang load.
+//   - Review form: cho phép học viên gửi đánh giá (rating + comment) cho khóa học.
+//
+// Component con:
+//   StarPicker : Bộ chọn số sao có hover effect.
+//   Modal      : Popup thông báo lỗi hoặc thành công.
+
+import { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Star, Lock, Unlock, PlayCircle, X, ChevronRight } from 'lucide-react';

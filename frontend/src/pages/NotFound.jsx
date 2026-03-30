@@ -1,4 +1,8 @@
-﻿import { Link } from 'react-router-dom';
+// Trang 404 — hiển thị khi người dùng truy cập URL không tồn tại.
+// Đăng ký trong App.jsx với route path="*" (wildcard).
+// Hiển thị số 404 lớn với hiệu ứng glow và nút "Về trang chủ".
+
+import { Link } from 'react-router-dom';
 
 export default function NotFound() {
   return (

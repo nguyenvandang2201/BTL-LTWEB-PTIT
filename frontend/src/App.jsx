@@ -1,3 +1,16 @@
+// Cấu hình routing toàn ứng dụng bằng React Router v6.
+//
+// Có 3 nhóm route chính:
+//   1. Public + Student routes dùng chung MainLayout (navbar + footer).
+//      - Public: Home, CourseList, CourseDetail, Login, Register — ai cũng truy cập được.
+//      - Student (bọc trong ProtectedRoute): MyCourses, Profile, Learning — yêu cầu đăng nhập.
+//
+//   2. Admin routes bọc trong AdminRoute (yêu cầu role='admin') + AdminLayout (sidebar).
+//      - Dashboard, Categories, Courses, Lessons, Students.
+//      - Truy cập /admin sẽ tự redirect sang /admin/dashboard.
+//
+//   3. Wildcard "*": Hiển thị trang NotFound (404) cho mọi URL không khớp.
+
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import MainLayout from './layouts/MainLayout';

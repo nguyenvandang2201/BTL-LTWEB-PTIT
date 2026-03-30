@@ -1,4 +1,14 @@
-﻿import { useState } from 'react';
+// Trang đăng nhập.
+// Gửi form tới auth.service → lưu token + role vào AuthContext → redirect theo role:
+//   - admin   → /admin
+//   - student → / (trang chủ)
+//
+// State:
+//   form    : Giá trị các ô input (email, password).
+//   error   : Thông báo lỗi từ API hoặc mặc định.
+//   loading : Trạng thái đang gửi request (disable nút submit).
+
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { login as loginApi } from '../services/auth.service';
@@ -11,11 +21,13 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Cập nhật field tương ứng khi người dùng gõ và xóa thông báo lỗi cũ.
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setError('');
   };
 
+  // Gửi form đăng nhập, lưu session và redirect theo role.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -24,7 +36,7 @@ export default function Login() {
       const res = await loginApi(form);
       const { token, role } = res.data || res;
       const user = { role };
-      login(token, user);
+      login(token, user); // Lưu vào AuthContext + localStorage.
       if (role === 'admin') {
         navigate('/admin');
       } else {

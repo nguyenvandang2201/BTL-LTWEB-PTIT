@@ -1,4 +1,12 @@
-﻿import { useQuery } from '@tanstack/react-query';
+// Trang chủ (Landing Page) của ứng dụng.
+// Hiển thị các section marketing: Hero, Khóa học nổi bật, Kỹ năng,
+// Lý do chọn, Các bước đăng ký, Thống kê số liệu, Testimonial, CTA Banner.
+//
+// Dữ liệu khóa học được fetch bằng React Query để hiển thị tối đa 6 khóa học nổi bật.
+// Các dữ liệu tĩnh (skills, reasons, steps, testimonials, stats)
+// được khai báo trực tiếp dưới dạng mảng constant để dễ bảo trì.
+
+import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { BookOpen, Users, Star, CheckCircle, PlayCircle, Award, Clock, TrendingUp, ChevronRight, Monitor, Code, Database, Globe } from 'lucide-react';
 import { getCourses } from '../services/public.service';

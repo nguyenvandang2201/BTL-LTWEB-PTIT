@@ -1,4 +1,16 @@
-﻿import { useParams, useNavigate } from 'react-router-dom';
+// Trang chi tiết khóa học — hiển thị thông tin đầy đủ, danh sách bài học và đánh giá.
+//
+// Tính năng:
+//   - Kiểm tra xem user đã mua khóa học chưa (so sánh my-courses vs id trên route).
+//   - Nếu đã mua: bài học bị khóa hiển thị trạng thái "Đã mở khóa".
+//   - Nếu chưa mua: bài học bị khóa hiển thị "Đã khóa", bài miễn phí có nút "Xem thử".
+//   - Admin có quyền xóa đánh giá bất kỳ (useMutation → invalidate cache ['course', id]).
+//   - enrollMutation: gọi enrollCourse, sau 1.5s redirect về /my-courses khi thành công.
+//
+// Component con:
+//   StarRating: Hiển thị số sao theo rating (1-5).
+
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Lock, Unlock, Star, BookOpen, User, ShoppingCart, Trash2, PlayCircle } from 'lucide-react';
 import { getCourseDetail } from '../services/public.service';

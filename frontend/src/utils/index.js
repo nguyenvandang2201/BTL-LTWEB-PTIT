@@ -1,4 +1,6 @@
-﻿/**
+// Tập hợp các hàm tiện ích (utility functions) dùng chung trong toàn bộ frontend.
+
+/**
  * Converts an ImgBB viewer URL (https://ibb.co/HASH) to a direct image URL
  * (https://i.ibb.co/HASH/image). Also accepts already-direct i.ibb.co links
  * and any other image URL unchanged.
@@ -13,6 +15,7 @@
  * Returns the clean embed URL so it can be stored in the DB and
  * rendered directly in an <iframe>.
  */
+// Chuẩn hóa mọi dạng link/iframe YouTube về dạng embed URL để dùng trong <iframe>.
 export function resolveVideoUrl(input) {
   if (!input) return '';
   const s = input.trim();
@@ -35,6 +38,8 @@ export function resolveVideoUrl(input) {
   return s;
 }
 
+// Chuyển đổi URL viewer của ImgBB (ibb.co/HASH) sang URL ảnh trực tiếp (i.ibb.co/HASH/image.png).
+// Nếu đã là i.ibb.co hoặc URL khác thì giữ nguyên.
 export function resolveImageUrl(url) {
   if (!url) return '';
   // Already a direct ImgBB link — use as-is

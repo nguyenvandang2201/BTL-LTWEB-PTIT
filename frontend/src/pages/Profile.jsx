@@ -1,4 +1,15 @@
-﻿import { useState } from 'react';
+// Trang hồ sơ cá nhân — gồm 2 card độc lập:
+//   1. Cập nhật họ tên: gọi updateProfile, nếu thành công cập nhật lại AuthContext.
+//   2. Đổi mật khẩu  : validate confirm_password ở client, gọi changePassword.
+//
+// Lưu ý thiết kế:
+//   - Email bị disabled (không cho sửa) — phù hợp với updateProfileSchema bên backend.
+//   - Sau khi đổi tên thành công, gọi login() để sync lại user trong localStorage + AuthContext
+//     mà không cần đăng xuất lại.
+//   - Trường confirm_password chỉ tồn tại ở client (không gửi lên backend),
+//     chỉ dùng để so sánh với new_password trước khi submit.
+
+import { useState } from 'react';
 import { User, Lock, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { updateProfile, changePassword } from '../services/student.service';

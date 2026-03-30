@@ -1,3 +1,12 @@
+// Layout dành riêng cho khu vực quản trị (Admin).
+// Bao gồm: Sidebar cố định bên trái, Top bar, Nội dung trang (Outlet).
+//
+// Sidebar chứa các NavLink điều hướng đến các trang admin:
+//   Dashboard, Danh mục, Khóa học, Bài giảng, Học viên.
+// NavLink tự động thêm class active (nền đỏ) cho route đang được chọn.
+//
+// Nút "Đăng xuất" gọi logout() từ AuthContext rồi redirect về /login.
+
 import { NavLink, Link, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -9,6 +18,7 @@ import {
   Video,
 } from 'lucide-react';
 
+// Danh sách các mục điều hướng trong sidebar — dễ mở rộng khi thêm trang mới.
 const navItems = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/admin/categories', label: 'Quản lý Danh mục', icon: Tag },
@@ -21,6 +31,7 @@ export default function AdminLayout() {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
+  // Đăng xuất và chuyển hướng về trang login.
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -45,7 +56,7 @@ export default function AdminLayout() {
           <span className="text-lg font-bold text-white">Admin Dashboard</span>
         </div>
 
-        {/* Nav */}
+        {/* Nav — render từ mảng navItems, NavLink tự xử lý class active */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {navItems.map(({ to, label, icon: Icon }) => (
             <NavLink
@@ -94,7 +105,7 @@ export default function AdminLayout() {
           </span>
         </header>
 
-        {/* Page content */}
+        {/* Page content — Outlet render trang admin tương ứng với route */}
         <main className="flex-1 overflow-y-auto p-6">
           <Outlet />
         </main>

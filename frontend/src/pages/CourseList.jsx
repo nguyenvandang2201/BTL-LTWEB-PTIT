@@ -1,15 +1,29 @@
-﻿import { useEffect, useState } from 'react';
+// Trang danh sách khóa học — hỗ trợ tìm kiếm và lọc theo danh mục.
+//
+// Tính năng:
+//   - Debounce input tìm kiếm 400ms trước khi gửi lên backend (tránh gọi API liên tục).
+//   - React Query tự refetch khi debouncedSearch hoặc selectedCategory thay đổi.
+//   - Nếu không có từ khóa → lấy toàn bộ khóa học (endpoint không có params).
+//   - Nếu có từ khóa → gửi { q, category_id } để backend xử lý fuzzy search.
+//
+// Component con:
+//   CourseCard : Hiển thị thông tin tóm tắt một khóa học (ảnh, tên, giá, danh mục).
+//   formatPrice: Định dạng giá tiền sang VND hoặc "Miễn phí".
+
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { getCourses, getCategories } from '../services/public.service';
 import { resolveImageUrl } from '../utils';
 
+// Định dạng giá tiền: 0 / null / undefined → "Miễn phí", ngược lại → VND.
 function formatPrice(price) {
   if (price === 0 || price === null || price === undefined) return 'Miễn phí';
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 }
 
+// Card hiển thị thông tin tóm tắt một khóa học, bọc trong Link để điều hướng.
 function CourseCard({ course }) {
   return (
     <Link

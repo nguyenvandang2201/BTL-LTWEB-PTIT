@@ -1,4 +1,14 @@
-﻿import { useState } from 'react';
+// Trang đăng ký tài khoản mới.
+// Gửi form tới auth.service.register → hiển thị thông báo thành công →
+// tự động chuyển hướng về /login sau 1.5 giây.
+//
+// State:
+//   form    : Giá trị các ô input (full_name, email, password).
+//   error   : Thông báo lỗi từ API (ví dụ: email đã tồn tại).
+//   success : Thông báo thành công trước khi redirect.
+//   loading : Trạng thái đang gửi request (disable nút submit).
+
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { register as registerApi } from '../services/auth.service';
 
@@ -10,12 +20,14 @@ export default function Register() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Cập nhật field tương ứng và xóa thông báo lỗi/thành công cũ.
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setError('');
     setSuccess('');
   };
 
+  // Gửi form đăng ký. Nếu thành công: hiển thị thông báo và redirect về login sau 1.5s.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);

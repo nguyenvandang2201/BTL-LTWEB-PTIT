@@ -1,4 +1,13 @@
-﻿import { useQuery } from '@tanstack/react-query';
+// Trang "Khóa học của tôi" — hiển thị danh sách khóa học học viên đã đăng ký.
+// Dùng React Query để fetch dữ liệu enrollment từ API /student/my-courses.
+//
+// Các trạng thái hiển thị:
+//   - isLoading : Spinner xoay.
+//   - isError   : Thông báo lỗi.
+//   - Rỗng      : Thông báo "chưa có khóa học" + nút khám phá.
+//   - Có dữ liệu: Grid các card khóa học với nút "Tiếp tục học".
+
+import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { BookOpen, PlayCircle } from 'lucide-react';
 import { getMyCourses } from '../services/student.service';
@@ -10,6 +19,7 @@ export default function MyCourses() {
     queryFn: getMyCourses,
   });
 
+  // axiosInstance đã unwrap response.data nên data là mảng enrollments trực tiếp.
   const enrollments = data?.data || data || [];
 
   return (
@@ -29,6 +39,7 @@ export default function MyCourses() {
         </div>
       )}
 
+      {/* Trường hợp chưa đăng ký khóa học nào */}
       {!isLoading && !isError && enrollments.length === 0 && (
         <div className="text-center py-20">
           <BookOpen size={48} className="mx-auto text-zinc-700 mb-4" />
@@ -42,6 +53,7 @@ export default function MyCourses() {
         </div>
       )}
 
+      {/* Grid hiển thị các card khóa học đã đăng ký */}
       {!isLoading && !isError && enrollments.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {enrollments.map((enrollment) => {
@@ -69,6 +81,7 @@ export default function MyCourses() {
                       {new Date(enrollment.enrolled_at).toLocaleDateString('vi-VN')}
                     </p>
                   )}
+                  {/* Nút dẫn tới trang học — dùng course_id để vào bài học đầu tiên */}
                   <Link
                     to={`/learning/${course.course_id}`}
                     className="flex items-center justify-center gap-2 w-full bg-[#8b0000] hover:bg-[#a01828] text-white text-sm font-medium py-2.5 rounded-lg transition-colors"
