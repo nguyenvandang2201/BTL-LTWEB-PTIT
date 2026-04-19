@@ -16,6 +16,7 @@
  *  - GET  /my-courses          : Lấy danh sách khóa học cá nhân.
  *  - PUT  /profile             : Cập nhật hồ sơ cá nhân (họ tên).
  *  - PUT  /change-password     : Đổi mật khẩu sau khi xác minh mật khẩu cũ.
+ *  - POST /chat                : Gửi câu hỏi tới AI Chatbot theo ngữ cảnh bài giảng.
  *
  * Prefix đăng ký trong app.js: /api/student
  */
@@ -24,7 +25,9 @@ import { Router } from 'express';
 import { verifyToken } from '../middlewares/authMiddleware.js';
 import { validate } from '../middlewares/validateMiddleware.js';
 import { enrollSchema, reviewSchema, updateProfileSchema, changePasswordSchema } from '../schemas/student.schema.js';
+import { chatSchema } from '../schemas/chat.schema.js';
 import { enrollCourse, getLessonVideo, createReview, getMyCourses, updateProfile, changePassword } from '../controllers/studentController.js';
+import { askChatbot } from '../controllers/chatController.js';
 
 const router = Router();
 
@@ -107,5 +110,20 @@ router.put('/profile', verifyToken, validate(updateProfileSchema), updateProfile
  * @returns {404} Không tìm thấy người dùng.
  */
 router.put('/change-password', verifyToken, validate(changePasswordSchema), changePassword);
+
+/**
+ * @route  POST /api/student/chat
+ * @desc   Gửi câu hỏi tới AI Chatbot trong ngữ cảnh bài học đang xem.
+ *         Controller query DB lấy thông tin bài học, xây dựng system prompt
+ *         nhúng context và gọi Google Gemini API để sinh câu trả lời.
+ *         chatSchema kiểm tra: lesson_id (number), messages (array 1–20 phần tử).
+ * @access Private (JWT required)
+ * @middleware verifyToken → validate(chatSchema) → askChatbot
+ * @body    { lesson_id: number, messages: [{role: 'user'|'assistant', content: string}] }
+ * @returns {200} { reply: string } — Câu trả lời từ Gemini AI.
+ * @returns {404} Không tìm thấy bài học.
+ * @returns {500} Lỗi kết nối Gemini API.
+ */
+router.post('/chat', verifyToken, validate(chatSchema), askChatbot);
 
 export default router;
