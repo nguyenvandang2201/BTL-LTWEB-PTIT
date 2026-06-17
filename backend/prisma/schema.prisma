@@ -41,6 +41,7 @@ model Course {
   created_at  DateTime     @default(now())
   category    Category     @relation(fields: [category_id], references: [category_id])
   lessons     Lesson[]
+  chunks      LessonChunk[]
   enrollments Enrollment[]
   reviews     Review[]
 
@@ -53,10 +54,29 @@ model Lesson {
   title       String
   video_url   String
   order_index Int
+  content     String?  @db.Text
   created_at  DateTime @default(now())
   course      Course   @relation(fields: [course_id], references: [course_id], onDelete: Cascade)
+  chunks      LessonChunk[]
 
   @@map("lessons")
+}
+
+model LessonChunk {
+  lesson_chunk_id Int      @id @default(autoincrement())
+  course_id       Int
+  lesson_id       Int
+  chunk_index     Int
+  content         String   @db.Text
+  embedding       Json
+  token_count     Int      @default(0)
+  created_at      DateTime @default(now())
+  course          Course   @relation(fields: [course_id], references: [course_id], onDelete: Cascade)
+  lesson          Lesson   @relation(fields: [lesson_id], references: [lesson_id], onDelete: Cascade)
+
+  @@index([course_id])
+  @@index([lesson_id])
+  @@map("lesson_chunks")
 }
 
 model Enrollment {

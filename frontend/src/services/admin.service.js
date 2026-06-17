@@ -43,6 +43,12 @@ export const updateCourse = async (id, formData) =>
 export const deleteCourse = async (id) =>
   axiosInstance.delete(`/admin/courses/${id}`);
 
+export const indexCourse = async (id) =>
+  axiosInstance.post(`/admin/courses/${id}/index`);
+
+export const getCourseIndexStatus = async (id) =>
+  axiosInstance.get(`/admin/courses/${id}/index-status`);
+
 // ── Lessons ───────────────────────────────────────────────────
 // Uses admin course-detail endpoint — returns full course including all lesson video_urls
 // Lấy danh sách bài học của một khóa học (dùng endpoint chi tiết khóa học của admin,

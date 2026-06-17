@@ -48,6 +48,20 @@ function MessageBubble({ message }) {
         }`}
       >
         {message.content}
+        {!isUser && message.routing && (
+          <div className="mt-2 flex items-center gap-1 text-[11px] leading-none">
+            <span
+              className={`rounded-full px-2 py-1 font-mono ${
+                message.routing.strategy === 'LCP'
+                  ? 'bg-purple-900/60 text-purple-200'
+                  : 'bg-blue-900/60 text-blue-200'
+              }`}
+            >
+              {message.routing.strategy}
+            </span>
+            <span className="text-zinc-500">score: {message.routing.score}</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -130,9 +144,9 @@ export default function LessonChatbot({ lessonId, lessonTitle, courseTitle }) {
       });
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: res.reply },
+        { role: 'assistant', content: res.reply || res.answer, routing: res.routing },
       ]);
-    } catch (err) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         {
