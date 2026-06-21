@@ -27,3 +27,8 @@ export const updateProfile = async (data) =>
 // Đổi mật khẩu — cần truyền { old_password, new_password }.
 export const changePassword = async (data) =>
   axiosInstance.put('/student/change-password', data);
+
+// Gửi câu hỏi tới AI Chatbot theo ngữ cảnh bài giảng đang xem.
+// Cần truyền { lesson_id: number, messages: [{role, content}] }.
+export const askLessonChatbot = async (data) =>
+  axiosInstance.post('/student/chat', data);

@@ -26,7 +26,7 @@ import { verifyToken } from '../middlewares/authMiddleware.js';
 import { isAdmin } from '../middlewares/roleMiddleware.js';
 import { validate } from '../middlewares/validateMiddleware.js';
 import { categorySchema, courseSchema, lessonSchema, updateCategorySchema, updateCourseSchema, updateLessonSchema } from '../schemas/admin.schema.js';
-import { createCategory, createCourse, createLesson, updateCategory, deleteCategory, getCourseAdmin, updateCourse, deleteCourse, updateLesson, deleteLesson, getStudents, getStudentDetail, deleteReview, getTopPurchasedCourses } from '../controllers/adminController.js';
+import { createCategory, createCourse, createLesson, updateCategory, deleteCategory, getCourseAdmin, updateCourse, deleteCourse, updateLesson, deleteLesson, getStudents, getStudentDetail, deleteReview, getTopPurchasedCourses, triggerCourseIndex, getCourseIndexStatusHandler } from '../controllers/adminController.js';
 import { uploadCourseImage, uploadLessonVideo } from '../config/cloudinary.js';
 
 const router = Router();
@@ -96,6 +96,20 @@ router.put('/courses/:id', verifyToken, isAdmin, uploadCourseImage.single('image
  * @middleware verifyToken → isAdmin → deleteCourse
  */
 router.delete('/courses/:id', verifyToken, isAdmin, deleteCourse);
+
+/**
+ * @route  POST /api/admin/courses/:id/index
+ * @desc   Index noi dung khoa hoc cho DRA/RAG chatbot.
+ * @access Private (Admin)
+ */
+router.post('/courses/:id/index', verifyToken, isAdmin, triggerCourseIndex);
+
+/**
+ * @route  GET /api/admin/courses/:id/index-status
+ * @desc   Kiem tra so chunks da index cua khoa hoc.
+ * @access Private (Admin)
+ */
+router.get('/courses/:id/index-status', verifyToken, isAdmin, getCourseIndexStatusHandler);
 
 // ---------------------------------------------------------------------------
 // BÀI HỌC (Lessons)

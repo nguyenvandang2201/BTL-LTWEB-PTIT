@@ -1,23 +1,25 @@
 ﻿import { useRef, useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { PlusCircle, Trash2, Loader2, Pencil, Check, X, Upload } from 'lucide-react';
+import { PlusCircle, Trash2, Loader2, Pencil, Check, X, Upload, Bot } from 'lucide-react';
 import {
   getAdminCourses,
   getAdminLessons,
   createLesson,
   updateLesson,
   deleteLesson,
+  indexCourse,
+  getCourseIndexStatus,
 } from '../services/admin.service';
 
 export default function AdminLessons() {
   const [selectedCourseId, setSelectedCourseId] = useState('');
-  const [form, setForm] = useState({ title: '', order_index: '' });
+  const [form, setForm] = useState({ title: '', order_index: '', content: '' });
   const [formError, setFormError] = useState('');
   const [lessonVideoFile, setLessonVideoFile] = useState(null);
   const lessonVideoInputRef = useRef(null);
 
   const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState({ title: '', order_index: '' });
+  const [editForm, setEditForm] = useState({ title: '', order_index: '', content: '' });
   const [editError, setEditError] = useState('');
   const [editVideoFile, setEditVideoFile] = useState(null);
   const editVideoInputRef = useRef(null);
@@ -42,12 +44,21 @@ export default function AdminLessons() {
   // getAdminLessons returns full course object; lessons are inside it
   const lessons = courseData?.lessons || [];
 
+  const {
+    data: indexStatus,
+    refetch: refetchIndexStatus,
+  } = useQuery({
+    queryKey: ['admin', 'course-index-status', selectedCourseId],
+    queryFn: () => getCourseIndexStatus(selectedCourseId),
+    enabled: !!selectedCourseId,
+  });
+
   // ── Create lesson ─────────────────────────────────────────────
   const createMutation = useMutation({
     mutationFn: createLesson,
     onSuccess: () => {
       refetch();
-      setForm({ title: '', order_index: '' });
+      setForm({ title: '', order_index: '', content: '' });
       setLessonVideoFile(null);
       if (lessonVideoInputRef.current) lessonVideoInputRef.current.value = '';
       setFormError('');
@@ -89,6 +100,32 @@ export default function AdminLessons() {
     },
   });
 
+  const indexMutation = useMutation({
+    mutationFn: indexCourse,
+    onSuccess: (res) => {
+      refetchIndexStatus();
+      alert(`Index thành công!\n${res.lessonsIndexed} bài học - ${res.chunksCreated} chunks đã được tạo.`);
+    },
+    onError: (err) => {
+      alert(
+        err?.response?.data?.message ||
+        err?.message ||
+        'Không thể index khóa học.'
+      );
+    },
+  });
+
+  const handleIndexCourse = () => {
+    if (!selectedCourseId || indexMutation.isPending) return;
+
+    const confirmed = window.confirm(
+      'Xác nhận index khóa học này cho AI?\n\nQuá trình này sẽ tạo lại chunks và embeddings từ nội dung text của tất cả bài học.'
+    );
+
+    if (!confirmed) return;
+    indexMutation.mutate(selectedCourseId);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setFormError('');
@@ -108,6 +145,7 @@ export default function AdminLessons() {
     fd.append('course_id', String(Number(selectedCourseId)));
     fd.append('title', form.title);
     fd.append('order_index', String(Number(form.order_index)));
+    fd.append('content', form.content || '');
     fd.append('video', lessonVideoFile);
     createMutation.mutate(fd);
   };
@@ -117,6 +155,7 @@ export default function AdminLessons() {
     setEditForm({
       title: lesson.title,
       order_index: lesson.order_index ?? '',
+      content: lesson.content || '',
     });
     setEditVideoFile(null);
     setEditError('');
@@ -139,6 +178,7 @@ export default function AdminLessons() {
     if (editForm.order_index !== '') {
       fd.append('order_index', String(Number(editForm.order_index)));
     }
+    fd.append('content', editForm.content || '');
     if (editVideoFile) {
       fd.append('video', editVideoFile);
     }
@@ -180,6 +220,37 @@ export default function AdminLessons() {
 
       {selectedCourseId && (
         <>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <h3 className="text-lg font-semibold text-zinc-100">
+                {courseData?.title || 'Bài giảng của khóa học'}
+              </h3>
+              <p className="text-xs text-zinc-500">
+                {indexStatus?.isIndexed
+                  ? `Đã index ${indexStatus.chunkCount} chunks cho AI.`
+                  : 'Chưa có dữ liệu index cho AI.'}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleIndexCourse}
+              disabled={indexMutation.isPending}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-700 hover:bg-purple-600 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
+            >
+              {indexMutation.isPending ? (
+                <Loader2 size={15} className="animate-spin" />
+              ) : (
+                <Bot size={15} />
+              )}
+              {indexMutation.isPending ? 'Đang index...' : 'Index cho AI'}
+              {indexStatus?.isIndexed && !indexMutation.isPending && (
+                <span className="ml-1 rounded bg-purple-500/70 px-1.5 py-0.5 text-[11px]">
+                  {indexStatus.chunkCount}
+                </span>
+              )}
+            </button>
+          </div>
+
           {/* Add lesson form */}
           <div className="bg-zinc-900/70 backdrop-blur-sm rounded-xl shadow-sm border border-zinc-800/60 p-5">
             <h3 className="text-base font-semibold text-zinc-200 mb-4 flex items-center gap-2">
@@ -204,6 +275,13 @@ export default function AdminLessons() {
                   className="px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
                 />
               </div>
+              <textarea
+                rows={6}
+                placeholder="Nội dung bài học / transcript dùng cho AI chatbot"
+                value={form.content}
+                onChange={(e) => setForm((p) => ({ ...p, content: e.target.value }))}
+                className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg text-sm placeholder:text-zinc-500 resize-y focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
+              />
               <div>
                 <div className="rounded-lg border border-zinc-700 bg-zinc-800/40 p-3 space-y-2">
                   <p className="text-xs text-zinc-500">Tải video trực tiếp từ máy tính.</p>
@@ -306,6 +384,13 @@ export default function AdminLessons() {
                                   value={editForm.title}
                                   onChange={(e) => setEditForm((p) => ({ ...p, title: e.target.value }))}
                                   className="w-full px-3 py-1.5 border border-zinc-600 bg-zinc-800 text-zinc-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
+                                />
+                                <textarea
+                                  rows={4}
+                                  value={editForm.content}
+                                  onChange={(e) => setEditForm((p) => ({ ...p, content: e.target.value }))}
+                                  placeholder="Nội dung bài học / transcript"
+                                  className="mt-2 w-full px-3 py-1.5 border border-zinc-600 bg-zinc-800 text-zinc-100 rounded-lg text-xs placeholder:text-zinc-500 resize-y focus:outline-none focus:ring-2 focus:ring-[#8b0000]"
                                 />
                                 {editError && (
                                   <p className="text-red-500 text-xs mt-1">{editError}</p>

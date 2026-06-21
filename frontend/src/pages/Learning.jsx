@@ -21,6 +21,7 @@ import { resolveVideoUrl } from '../utils';
 import { getCourseDetail } from '../services/public.service';
 import { getLessonVideo, createReview, getMyCourses } from '../services/student.service';
 import { useAuth } from '../context/AuthContext';
+import LessonChatbot from '../components/LessonChatbot';
 
 // ── Star picker ──────────────────────────────────────────────
 function StarPicker({ value, onChange }) {
@@ -373,8 +374,15 @@ export default function Learning() {
           </div>
         </div>
       </div>
+
+      {/* AI Chatbot — chỉ hiện khi học viên đang xem một bài học cụ thể */}
+      {activeLesson && (
+        <LessonChatbot
+          lessonId={activeLesson}
+          lessonTitle={lessons.find((l) => l.lesson_id === activeLesson)?.title || ''}
+          courseTitle={course?.title || ''}
+        />
+      )}
     </div>
   );
 }
-
-
