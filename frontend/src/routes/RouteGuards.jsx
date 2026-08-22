@@ -10,7 +10,7 @@
 // Cả hai đều dùng <Outlet /> để render các route con khi điều kiện được thỏa mãn.
 
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth.js';
 
 // Bảo vệ các route yêu cầu đăng nhập (dành cho học viên).
 export function ProtectedRoute() {

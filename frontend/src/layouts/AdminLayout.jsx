@@ -8,7 +8,7 @@
 // Nút "Đăng xuất" gọi logout() từ AuthContext rồi redirect về /login.
 
 import { NavLink, Link, Outlet, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth.js';
 import {
   LayoutDashboard,
   BookOpen,

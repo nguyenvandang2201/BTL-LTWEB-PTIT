@@ -10,7 +10,7 @@
 
 import { Link } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth.js';
 import { BookOpen } from 'lucide-react';
 
 export default function MainLayout() {

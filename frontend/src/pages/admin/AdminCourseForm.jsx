@@ -86,6 +86,9 @@ export default function AdminCourseForm() {
   useEffect(() => {
     if (!isEdit || !lessonsData || formInitialized.current) return;
     formInitialized.current = true;
+    // Nạp dữ liệu khoá học từ API vào form đúng một lần khi vào chế độ chỉnh sửa.
+    // Ref `formInitialized` chặn mọi lần chạy sau, nên không xảy ra cascading render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCourseForm({
       title: lessonsData.title || '',
       price: lessonsData.price ?? '',

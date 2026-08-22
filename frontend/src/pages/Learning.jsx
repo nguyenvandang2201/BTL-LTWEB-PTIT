@@ -20,7 +20,7 @@ import { Star, Lock, Unlock, PlayCircle, X, ChevronRight } from 'lucide-react';
 import { resolveVideoUrl } from '../utils';
 import { getCourseDetail } from '../services/public.service';
 import { getLessonVideo, createReview, getMyCourses } from '../services/student.service';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth.js';
 
 // ── Star picker ──────────────────────────────────────────────
 function StarPicker({ value, onChange }) {
@@ -133,7 +133,7 @@ export default function Learning() {
       }
       setLoadingLesson(null);
     },
-    onError: (err, id) => {
+    onError: (err) => {
       setLoadingLesson(null);
       const status = err?.response?.status;
       const msg =
@@ -188,6 +188,10 @@ export default function Learning() {
 
     const previewLesson = lessons.find((l) => l.lesson_id === previewLessonId);
     if (!previewLesson) {
+      // Đây là thao tác khởi tạo một lần khi dữ liệu bất đồng bộ (danh sách bài
+      // học) về tới, không phải state phái sinh — cờ didAutoPreview đảm bảo
+      // effect chỉ chạy đúng một lần nên không gây vòng lặp render.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDidAutoPreview(true);
       return;
     }

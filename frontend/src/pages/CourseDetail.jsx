@@ -16,7 +16,7 @@ import { Lock, Unlock, Star, BookOpen, User, ShoppingCart, Trash2, PlayCircle } 
 import { getCourseDetail } from '../services/public.service';
 import { enrollCourse, getMyCourses } from '../services/student.service';
 import { deleteReview } from '../services/admin.service';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth.js';
 import { useState } from 'react';
 import { resolveImageUrl } from '../utils';
 
@@ -50,8 +50,7 @@ export default function CourseDetail() {
 
   const enrollMutation = useMutation({
     mutationFn: () => enrollCourse(Number(id)),
-    onSuccess: (res) => {
-      const msg = res?.data?.message || res?.message || '';
+    onSuccess: () => {
       setEnrollMsg('Mua thành công! Đang chuyển hướng...');
       setTimeout(() => navigate(`/my-courses`), 1500);
     },
