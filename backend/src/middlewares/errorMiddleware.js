@@ -14,6 +14,8 @@
  *   app.use(errorHandler);
  */
 
+import { isProduction } from '../config/env.js';
+
 /**
  * @function notFound
  * @description Middleware bắt các request đến route không tồn tại (404 Not Found).
@@ -68,6 +70,6 @@ export const errorHandler = (err, req, res, next) => {
     message: err.message,
     // Chỉ đính kèm stack trace ở môi trường non-production (development/test) để hỗ trợ debug.
     // Ở production, stack bị ẩn để tránh lộ chi tiết cấu trúc nội bộ ứng dụng.
-    ...(process.env.NODE_ENV !== 'production' && { stack: err.stack }),
+    ...(!isProduction && { stack: err.stack }),
   });
 };

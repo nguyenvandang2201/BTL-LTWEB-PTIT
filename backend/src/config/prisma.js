@@ -5,10 +5,10 @@
  * qua driver adapter `@prisma/adapter-pg`.
  */
 
-import 'dotenv/config';
 import pg from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import { env, isProduction } from './env.js';
 
 /**
  * Tạo một instance PrismaClient mới với driver adapter PostgreSQL.
@@ -25,7 +25,7 @@ import { PrismaClient } from '@prisma/client';
  */
 const createPrismaClient = () => {
   /** Connection pool tới PostgreSQL, lấy URL từ biến môi trường DATABASE_URL. */
-  const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+  const pool = new pg.Pool({ connectionString: env.DATABASE_URL });
 
   /** Adapter chuyển đổi giao thức giữa Prisma và thư viện pg. */
   const adapter = new PrismaPg(pool);
@@ -55,7 +55,7 @@ const prisma = globalThis.prisma ?? createPrismaClient();
  * Không áp dụng ở production vì server production không hot-reload —
  * module chỉ được import một lần duy nhất trong suốt vòng đời tiến trình.
  */
-if (process.env.NODE_ENV !== 'production') {
+if (!isProduction) {
   globalThis.prisma = prisma;
 }
 

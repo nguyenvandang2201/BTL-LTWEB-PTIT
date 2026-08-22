@@ -16,6 +16,7 @@
  */
 
 import jwt from 'jsonwebtoken';
+import { env } from '../config/env.js';
 
 /**
  * @function verifyToken
@@ -54,11 +55,11 @@ export const verifyToken = (req, res, next) => {
   try {
     // Xác thực chữ ký và giải mã payload của token bằng JWT_SECRET từ biến môi trường.
     // Nếu token hết hạn hoặc bị giả mạo, jwt.verify() sẽ ném ngoại lệ.
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, env.JWT_SECRET);
     // Gắn payload đã giải mã vào req.user để các middleware/controller sau sử dụng.
     req.user = decoded;
     next();
-  } catch (error) {
+  } catch (_error) {
     // Token bị giả mạo (sai chữ ký) hoặc đã hết hạn → từ chối truy cập với 403.
     return res.status(403).json({ message: 'Token không hợp lệ hoặc đã hết hạn' });
   }

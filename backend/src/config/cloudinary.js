@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import multer from 'multer';
+import { env } from './env.js';
 
 /**
  * Cấu hình kết nối tới tài khoản Cloudinary.
@@ -12,13 +13,13 @@ import multer from 'multer';
  */
 cloudinary.config({
   /** Tên cloud (namespace) của tài khoản Cloudinary. */
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  cloud_name: env.CLOUDINARY_CLOUD_NAME,
 
   /** API Key dùng để xác thực ứng dụng với Cloudinary. */
-  api_key: process.env.CLOUDINARY_API_KEY,
+  api_key: env.CLOUDINARY_API_KEY,
 
   /** API Secret dùng để ký / xác nhận các request quản trị lên Cloudinary. */
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  api_secret: env.CLOUDINARY_API_SECRET,
 });
 
 /**

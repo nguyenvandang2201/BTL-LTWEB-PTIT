@@ -13,6 +13,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import prisma from '../config/prisma.js';
+import { env } from '../config/env.js';
 
 /** Số vòng salt dùng khi băm mật khẩu bằng bcrypt. Giá trị 10 là mức cân bằng giữa bảo mật và hiệu năng. */
 const SALT_ROUNDS = 10;
@@ -108,8 +109,8 @@ export const login = async (req, res) => {
     // Tạo JWT token chứa userId và role, hết hạn sau 1 ngày.
     const token = jwt.sign(
       { userId: user.user_id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
+      env.JWT_SECRET,
+      { expiresIn: env.JWT_EXPIRES_IN }
     );
 
     // Trả token và role về client để lưu trữ (localStorage/cookie) và phân quyền giao diện.
