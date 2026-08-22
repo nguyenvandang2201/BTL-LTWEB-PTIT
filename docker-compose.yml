@@ -1,0 +1,39 @@
+# =============================================================================
+# Dịch vụ hạ tầng phục vụ phát triển local.
+#
+# Chỉ chứa PostgreSQL — backend và frontend vẫn chạy trực tiếp bằng npm để
+# giữ trải nghiệm hot-reload nhanh nhất khi phát triển.
+#
+# Sử dụng:
+#   docker compose up -d      # khởi động PostgreSQL
+#   docker compose down       # dừng (dữ liệu vẫn được giữ trong volume)
+#   docker compose down -v    # dừng và XOÁ toàn bộ dữ liệu
+# =============================================================================
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: online-course-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: online_course
+      # Bật so sánh chuỗi không phân biệt hoa thường theo locale tiếng Việt.
+      LANG: C.UTF-8
+    ports:
+      # Ánh xạ ra cổng 5432 của máy host để Prisma kết nối qua DATABASE_URL.
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # Chỉ báo "healthy" khi PostgreSQL thực sự sẵn sàng nhận kết nối,
+      # tránh việc chạy migration quá sớm.
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d online_course']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  # Volume có tên giúp dữ liệu tồn tại qua các lần `docker compose down`.
+  postgres_data:

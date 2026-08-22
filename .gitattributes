@@ -1,0 +1,19 @@
+# Chuẩn hoá ký tự xuống dòng: repository luôn lưu LF, checkout theo hệ điều hành.
+* text=auto eol=lf
+
+# Script shell bắt buộc dùng LF để chạy được trên Linux/CI.
+*.sh text eol=lf
+
+# File nhị phân — không đụng vào nội dung.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.svg text
+*.ico binary
+*.pdf binary
+*.mp4 binary
+
+# Không tính lockfile vào thống kê ngôn ngữ và ẩn khỏi diff mặc định.
+package-lock.json linguist-generated=true -diff

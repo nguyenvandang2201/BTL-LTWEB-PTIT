@@ -1,0 +1,30 @@
+{
+  "name": "btl-ltweb-ptit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Nền tảng học trực tuyến — đồ án Lập trình Web, Học viện Công nghệ Bưu chính Viễn thông (PTIT).",
+  "license": "MIT",
+  "author": "Nguyen Van Dang",
+  "engines": {
+    "node": ">=18.18.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "setup": "npm run install:all",
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "dev": "concurrently --names \"API,WEB\" --prefix-colors \"magenta,cyan\" --kill-others-on-fail \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "lint": "npm run lint --prefix backend && npm run lint --prefix frontend",
+    "lint:fix": "npm run lint:fix --prefix backend && npm run lint:fix --prefix frontend",
+    "db:migrate": "npm run prisma:migrate --prefix backend",
+    "db:seed": "npm run seed --prefix backend",
+    "db:studio": "npm run prisma:studio --prefix backend",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

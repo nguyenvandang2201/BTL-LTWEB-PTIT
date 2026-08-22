@@ -1,0 +1,23 @@
+# EditorConfig giúp thống nhất phong cách code giữa các IDE/editor khác nhau.
+# https://editorconfig.org
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+max_line_length = 100
+
+[*.md]
+# Markdown dùng hai dấu cách cuối dòng để xuống dòng mềm, không được cắt bỏ.
+trim_trailing_whitespace = false
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[Makefile]
+indent_style = tab
