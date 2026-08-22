@@ -15,5 +15,6 @@
 *.pdf binary
 *.mp4 binary
 
-# Không tính lockfile vào thống kê ngôn ngữ và ẩn khỏi diff mặc định.
-package-lock.json linguist-generated=true -diff
+# Không tính lockfile vào thống kê ngôn ngữ của repository.
+# Vẫn giữ diff dạng text để có thể rà soát thay đổi dependency khi review.
+package-lock.json linguist-generated=true
