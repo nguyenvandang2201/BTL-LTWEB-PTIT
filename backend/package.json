@@ -1,38 +1,61 @@
 {
-  "name": "backend",
+  "name": "online-course-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "REST API cho nền tảng học trực tuyến — Node.js, Express 5, Prisma ORM, PostgreSQL và xác thực JWT.",
   "type": "module",
-  "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "seed:student-courses-reviews": "node prisma/seedStudentCoursesAndReviews.js"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:studio": "prisma studio",
+    "seed": "prisma db seed"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "express",
+    "prisma",
+    "postgresql",
+    "jwt",
+    "rest-api",
+    "e-learning"
+  ],
+  "author": "Nguyen Van Dang",
+  "license": "MIT",
   "dependencies": {
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "bcrypt": "^6.0.0",
     "cloudinary": "^1.41.3",
+    "compression": "^1.8.1",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.6.2",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.11.0",
     "multer": "^2.1.1",
     "multer-storage-cloudinary": "^4.0.0",
     "pg": "^8.20.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.9.0",
+    "globals": "^17.11.0",
     "nodemon": "^3.1.14",
     "prisma": "^7.4.2"
-  }
+  },
+  "private": true,
+  "engines": {
+    "node": ">=18.18.0",
+    "npm": ">=9.0.0"
+  },
+  "main": "src/index.js"
 }
