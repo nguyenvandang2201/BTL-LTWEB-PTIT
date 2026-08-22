@@ -56,9 +56,23 @@ export const validate = (schema) => (req, res, next) => {
     next();
   } catch (error) {
     if (error instanceof ZodError) {
-      // ZodError chứa mảng errors với thông tin chi tiết từng trường bị lỗi:
-      // path (tên trường), message (mô tả lỗi), code (loại lỗi Zod).
-      return res.status(400).json({ errors: error.errors });
+      // Lưu ý phiên bản: từ Zod v4, danh sách lỗi nằm ở `error.issues`.
+      // Thuộc tính `error.errors` của Zod v3 đã bị loại bỏ và trả về `undefined`,
+      // nên phải đọc từ `issues` — nếu không, client sẽ nhận về body rỗng.
+      const issues = error.issues.map((issue) => ({
+        // Đường dẫn tới trường bị lỗi, ví dụ ['email'] hoặc ['address', 'city'].
+        path: issue.path,
+        // Tên trường ở dạng chuỗi, tiện cho frontend hiển thị lỗi ngay dưới input.
+        field: issue.path.join('.'),
+        message: issue.message,
+        code: issue.code,
+      }));
+
+      return res.status(400).json({
+        // Thông điệp tổng quát để UI hiển thị nhanh mà không cần duyệt mảng.
+        message: issues[0]?.message ?? 'Dữ liệu gửi lên không hợp lệ',
+        errors: issues,
+      });
     }
     // Lỗi không phải ZodError (ví dụ: lỗi runtime không mong muốn) → chuyển sang errorHandler.
     next(error);
