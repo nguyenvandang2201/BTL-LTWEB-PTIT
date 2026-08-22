@@ -74,6 +74,42 @@ const envSchema = z.object({
 
   /** API Secret Cloudinary. */
   CLOUDINARY_API_SECRET: z.string().optional(),
+
+  // ---------------------------------------------------------------------------
+  // AI Chatbot (DRA: Dynamic Retrieval Augmentation)
+  //
+  // Toàn bộ nhóm biến này là tuỳ chọn: nếu bỏ trống, ứng dụng vẫn khởi động và
+  // mọi tính năng khác hoạt động bình thường — chỉ riêng chatbot sẽ báo lỗi rõ
+  // ràng khi người dùng gọi tới. Cách này giúp người mới clone dự án chạy được
+  // ngay mà không bắt buộc phải có API key trả phí.
+  // ---------------------------------------------------------------------------
+
+  /** API key Google Gemini, dùng để tạo vector embedding cho nội dung bài học. */
+  GEMINI_API_KEY: z.string().optional(),
+
+  /** API key DeepSeek, dùng để sinh câu trả lời cho chatbot. */
+  DEEPSEEK_API_KEY: z.string().optional(),
+
+  /** Tên mô hình DeepSeek dùng cho chat completion. */
+  DEEPSEEK_MODEL: z.string().default('deepseek-chat'),
+
+  /**
+   * Ngưỡng điểm để bộ định tuyến chuyển từ chiến lược RAG sang LCP.
+   * Điểm càng cao nghĩa là câu hỏi càng cần tổng hợp nhiều nguồn.
+   */
+  ROUTER_LCP_THRESHOLD: z.coerce.number().int().default(3),
+
+  /** Số đoạn nội dung liên quan nhất được truy xuất cho mỗi câu hỏi (RAG). */
+  RAG_TOP_K: z.coerce.number().int().positive().default(3),
+
+  /** Độ dài mỗi đoạn (chunk) khi chia nhỏ nội dung bài học, tính bằng ký tự. */
+  RAG_CHUNK_SIZE: z.coerce.number().int().positive().default(1500),
+
+  /** Số ký tự chồng lấn giữa hai đoạn liên tiếp, giúp không cắt đứt ngữ cảnh. */
+  RAG_CHUNK_OVERLAP: z.coerce.number().int().nonnegative().default(200),
+
+  /** Giới hạn ký tự khi nhồi toàn bộ nội dung khoá học vào prompt (LCP). */
+  LCP_MAX_CHARS: z.coerce.number().int().positive().default(200_000),
 });
 
 /**
@@ -119,5 +155,11 @@ export const isProduction = env.NODE_ENV === 'production';
 
 /** Cờ tiện ích: ứng dụng có đang chạy ở môi trường development hay không. */
 export const isDevelopment = env.NODE_ENV === 'development';
+
+/**
+ * Cờ tiện ích: đã cấu hình đủ API key để tính năng AI Chatbot hoạt động chưa.
+ * Cần cả Gemini (tạo embedding) lẫn DeepSeek (sinh câu trả lời).
+ */
+export const isChatbotConfigured = Boolean(env.GEMINI_API_KEY && env.DEEPSEEK_API_KEY);
 
 export default env;

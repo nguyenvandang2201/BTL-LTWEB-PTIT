@@ -42,6 +42,19 @@ export const apiLimiter = rateLimit({
 });
 
 /**
+ * Limiter dành riêng cho endpoint AI Chatbot.
+ *
+ * Mỗi câu hỏi kích hoạt ít nhất một lần gọi Gemini (embedding) và một lần gọi
+ * DeepSeek (sinh câu trả lời) — đều là API trả phí theo lượt. Giới hạn 10 câu
+ * hỏi mỗi phút cho mỗi tài khoản vừa đủ cho nhu cầu học tập thực tế, vừa chặn
+ * được kịch bản spam làm phát sinh chi phí ngoài ý muốn.
+ *
+ * Phải đặt SAU `verifyToken` trong chuỗi middleware để đọc được `req.user`.
+ *
+ * @type {import('express').RequestHandler}
+ */
+
+/**
  * Limiter nghiêm ngặt dành cho các endpoint xác thực (đăng nhập, đăng ký).
  *
  * Hạn mức thấp hơn nhiều so với `apiLimiter` vì đây là mục tiêu chính của
@@ -50,6 +63,19 @@ export const apiLimiter = rateLimit({
  *
  * @type {import('express').RequestHandler}
  */
+export const chatLimiter = rateLimit({
+  // Cửa sổ ngắn hơn (1 phút) để chặn spam tức thời mà không khoá người dùng quá lâu.
+  windowMs: 60 * 1000,
+  limit: 10,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  // Tính hạn mức theo tài khoản đăng nhập; chỉ lùi về IP khi chưa xác thực.
+  keyGenerator: (req) => (req.user?.userId ? `user:${req.user.userId}` : req.ip),
+  message: {
+    message: 'Bạn đang hỏi quá nhanh. Vui lòng chờ một chút rồi thử lại.',
+  },
+});
+
 export const authLimiter = rateLimit({
   windowMs: WINDOW_MS,
   limit: 20,

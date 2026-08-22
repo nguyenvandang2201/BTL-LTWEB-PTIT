@@ -57,10 +57,15 @@ Thời hạn mặc định là **1 ngày**, cấu hình qua biến môi trườn
 
 ### Giới hạn tần suất (rate limit)
 
-| Phạm vi      | Hạn mức mặc định                  |
-| ------------ | --------------------------------- |
-| `/api/*`     | 300 request / 15 phút / IP        |
-| `/api/auth/*`| 20 request / 15 phút / IP (chỉ tính request thất bại) |
+| Phạm vi              | Hạn mức mặc định                                      |
+| -------------------- | ----------------------------------------------------- |
+| `/api/*`             | 300 request / 15 phút / IP                            |
+| `/api/auth/*`        | 20 request / 15 phút / IP (chỉ tính request thất bại) |
+| `/api/student/chat`  | 10 request / phút / **tài khoản**                     |
+
+Hạn mức riêng của chatbot tính theo tài khoản đăng nhập thay vì IP, vì mỗi câu
+hỏi kích hoạt ít nhất một lần gọi Gemini và một lần gọi DeepSeek — đều là API
+trả phí theo lượt.
 
 Khi vượt hạn mức, server trả về `429 Too Many Requests`.
 
@@ -415,6 +420,63 @@ Cập nhật thông tin cá nhân.
 
 ---
 
+### `POST /student/chat`
+
+Đặt câu hỏi cho trợ lý AI trong ngữ cảnh một bài học.
+
+Áp dụng đúng quy tắc mở khoá nội dung như video: hai bài đầu của mỗi khoá luôn
+được phép, từ bài thứ ba yêu cầu enrollment `is_paid = true`.
+
+**Body**
+
+| Trường               | Kiểu   | Bắt buộc | Ràng buộc                          |
+| -------------------- | ------ | -------- | ---------------------------------- |
+| `lesson_id`          | number | ✅       | Số nguyên dương                    |
+| `messages`           | array  | ✅       | 1–20 phần tử, phần tử cuối là câu hỏi mới |
+| `messages[].role`    | string | ✅       | `"user"` hoặc `"assistant"`        |
+| `messages[].content` | string | ✅       | Không được rỗng                    |
+
+```json
+{
+  "lesson_id": 13,
+  "messages": [
+    { "role": "user", "content": "useEffect chạy khi nào?" }
+  ]
+}
+```
+
+**Response `200`**
+
+Trường `routing` cho biết hệ thống đã chọn chiến lược nào và vì sao — hữu ích khi
+gỡ lỗi chất lượng câu trả lời. `answer` và `reply` chứa cùng một nội dung
+(`reply` giữ lại để tương thích ngược).
+
+```json
+{
+  "answer": "useEffect chạy sau mỗi lần component render xong...",
+  "reply": "useEffect chạy sau mỗi lần component render xong...",
+  "routing": {
+    "strategy": "RAG",
+    "score": -1,
+    "confidence": "low",
+    "sourceChunks": ["useEffect là hook dùng để thực hiện side effect..."]
+  }
+}
+```
+
+Khi chiến lược là `LCP`, `routing` trả về `contextSize` (số ký tự ngữ cảnh đã
+nạp) thay cho `sourceChunks`.
+
+| Mã    | Ý nghĩa                                                   |
+| ----- | --------------------------------------------------------- |
+| `400` | Thiếu `lesson_id`, `messages` rỗng hoặc không có câu hỏi   |
+| `403` | Chưa mua khoá học chứa bài học này                        |
+| `404` | Không tìm thấy bài học                                    |
+| `429` | Hỏi quá nhanh (vượt 10 câu / phút)                        |
+| `500` | Chưa cấu hình `GEMINI_API_KEY` / `DEEPSEEK_API_KEY`, hoặc lỗi từ dịch vụ AI |
+
+---
+
 ## 7. Admin
 
 Tất cả endpoint yêu cầu `Authorization: Bearer <token>` với vai trò `admin`
@@ -479,6 +541,22 @@ Khi cập nhật, mọi trường đều là tuỳ chọn.
 | `title`       | string | ✅               | Không rỗng |
 | `order_index` | number | ✅               | Số nguyên  |
 | `video`       | file   | ❌               | Video bài giảng |
+
+---
+
+### AI Chatbot — indexing nội dung
+
+Trước khi chatbot trả lời dựa trên nội dung khoá học, quản trị viên phải index
+khoá học đó: nội dung text của từng bài giảng được chia nhỏ, tạo embedding và
+lưu vào bảng `lesson_chunks`.
+
+| Method | Endpoint                          | Mô tả                                     |
+| ------ | --------------------------------- | ----------------------------------------- |
+| `POST` | `/admin/courses/:id/index`        | Chạy indexing (chunk + embedding)         |
+| `GET`  | `/admin/courses/:id/index-status` | Kiểm tra số chunk đã index của khoá học   |
+
+> ⚠️ Sửa nội dung bài học **không** tự động re-index. Cần gọi lại endpoint index.
+> Thao tác này tiêu tốn quota API Gemini theo số đoạn được tạo.
 
 ---
 

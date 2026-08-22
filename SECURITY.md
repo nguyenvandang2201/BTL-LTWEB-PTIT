@@ -27,6 +27,8 @@ Khi báo cáo, cố gắng cung cấp:
 | Rate limiting       | Giới hạn theo IP cho toàn bộ `/api`, siết chặt hơn ở `/api/auth`.           |
 | Rò rỉ thông tin     | Stack trace chỉ hiển thị ở môi trường non-production.                       |
 | Biến môi trường     | Xác thực bằng Zod lúc khởi động; `.env` bị loại khỏi Git.                   |
+| API key AI          | Gemini/DeepSeek chỉ đọc phía server, không bao giờ gửi xuống client.        |
+| Chi phí dịch vụ AI  | Endpoint chatbot yêu cầu đăng nhập, kiểm tra quyền học và giới hạn 10 câu hỏi/phút theo tài khoản. |
 
 ---
 
@@ -38,3 +40,4 @@ Khi báo cáo, cố gắng cung cấp:
 - [ ] Bật SSL cho kết nối PostgreSQL.
 - [ ] Đổi mật khẩu của mọi tài khoản được tạo bởi script seed.
 - [ ] Rà soát lại `RATE_LIMIT_MAX` cho phù hợp lưu lượng thực tế.
+- [ ] Đặt hạn mức chi tiêu (budget alert) trên tài khoản Google AI Studio và DeepSeek.

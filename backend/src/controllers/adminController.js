@@ -3,6 +3,7 @@
 // Mọi thao tác CRUD (Create, Read, Update, Delete) đều đi qua đối tượng này.
 // =============================================================================
 import prisma from '../config/prisma.js';
+import { indexCourse, getCourseIndexStatus } from '../services/indexingService.js';
 
 /**
  * @file adminController.js
@@ -250,7 +251,7 @@ export const getCourseAdmin = async (req, res) => {
       include: {
         category: { select: { name: true } }, // Lấy tên danh mục
         lessons: { // Lấy danh sách bài giảng với điều kiện sắp xếp đúng thứ tự
-          select: { lesson_id: true, title: true, video_url: true, order_index: true },
+          select: { lesson_id: true, title: true, video_url: true, order_index: true, content: true },
           orderBy: { order_index: 'asc' },
         },
       },
@@ -411,6 +412,7 @@ export const createLesson = async (req, res) => {
     const course_id = Number(req.body.course_id);
     const title = req.body.title;
     const order_index = Number(req.body.order_index); // Thứ tự hiển thị của bài học
+    const content = req.body.content?.trim() || null;
 
     // Lấy link video từ file payload upload lên (via middleware ngầm)
     const video_url = req.file?.path;
@@ -422,7 +424,7 @@ export const createLesson = async (req, res) => {
 
     // Lưu thông tin bài giảng mới vào database
     const lesson = await prisma.lesson.create({
-      data: { course_id, title, video_url, order_index },
+      data: { course_id, title, video_url, order_index, content },
     });
 
     return res.status(201).json({ message: 'Thêm bài giảng thành công', lesson });
@@ -455,6 +457,7 @@ export const updateLesson = async (req, res) => {
 
     if (req.body.title !== undefined) data.title = req.body.title;
     if (req.body.order_index !== undefined) data.order_index = Number(req.body.order_index);
+    if (req.body.content !== undefined) data.content = req.body.content?.trim() || null;
 
     // Cập nhật video nếu có upload video mới
     if (req.file) data.video_url = req.file.path;
@@ -619,6 +622,45 @@ export const getStudentDetail = async (req, res) => {
  * @param {Object} res - Express Response object
  * @returns {Promise<Object>} Thông báo xóa bình luận thành công
  */
+// =============================================================================
+// SECTION 7: DRA INDEXING
+// =============================================================================
+
+export const triggerCourseIndex = async (req, res, next) => {
+  try {
+    const courseId = Number(req.params.id);
+
+    const course = await prisma.course.findUnique({
+      where: { course_id: courseId },
+    });
+
+    if (!course) {
+      return res.status(404).json({ message: 'Khong tim thay khoa hoc' });
+    }
+
+    const result = await indexCourse(courseId);
+
+    return res.status(200).json({
+      message: `Da index thanh cong khoa hoc "${course.title}"`,
+      ...result,
+    });
+  } catch (error) {
+    console.error('[Admin] Loi index khoa hoc:', error.message);
+    next(error);
+  }
+};
+
+export const getCourseIndexStatusHandler = async (req, res, next) => {
+  try {
+    const courseId = Number(req.params.id);
+    const status = await getCourseIndexStatus(courseId);
+
+    return res.status(200).json(status);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const deleteReview = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
